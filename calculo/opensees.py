@@ -644,6 +644,10 @@ class Resolutor:
 
         puntuales  [(eid, Px, Py, Pz, xL)] en ejes locales (beamPoint)
         nodales    [(nid, [fx, fy, fz, mx, my, mz])] globales
+
+    El orden en que se definen las cargas dentro del patron es el de cada
+    llamador en v1.0 (la carga movil, puntuales y despues nodales; la
+    persona, al reves): `nodales_primero` lo conserva.
     """
 
     def __init__(self, modelo, tag_base=7000):
@@ -655,7 +659,7 @@ class Resolutor:
         self.ids_elem = [int(e['id']) for e in modelo['elementos']]
         self.n_resueltos = 0
 
-    def resolver(self, puntuales=(), nodales=()):
+    def resolver(self, puntuales=(), nodales=(), nodales_primero=False):
         if self.tag_previo is not None:
             ops.remove('loadPattern', self.tag_previo)
         ops.reset()
@@ -663,11 +667,22 @@ class Resolutor:
         self.tag += 1
         ops.timeSeries('Linear', self.tag)
         ops.pattern('Plain', self.tag, self.tag)
-        for eid, Px, Py, Pz, xL in puntuales:
-            ops.eleLoad('-ele', int(eid), '-type', '-beamPoint',
-                        float(Py), float(Pz), float(xL), float(Px))
-        for nid, f in nodales:
-            ops.load(int(nid), *[float(v) for v in f])
+
+        def _puntuales():
+            for eid, Px, Py, Pz, xL in puntuales:
+                ops.eleLoad('-ele', int(eid), '-type', '-beamPoint',
+                            float(Py), float(Pz), float(xL), float(Px))
+
+        def _nodales():
+            for nid, f in nodales:
+                ops.load(int(nid), *[float(v) for v in f])
+
+        if nodales_primero:
+            _nodales()
+            _puntuales()
+        else:
+            _puntuales()
+            _nodales()
         self.tag_previo = self.tag
         ok = resolver_caso()
         if ok != 0:
