@@ -1,0 +1,21 @@
+<!--
+  Clases del motor que el visor crea POR CODIGO (AddComponent) y que
+  ninguna escena referencia. En los builds Web y Android, Unity quita del
+  motor lo que no ve usado ("Strip Engine Code", activo en
+  ProjectSettings) y en ejecucion sale
+      Can't add component because class 'SphereCollider' doesn't exist!
+  558 veces (un colisionador por nodo) y 531 con 'CapsuleCollider' (uno
+  por barra), en el build Web del conjunto del 2026-09-25. Sin esos
+  colisionadores el Raycast del clic no encuentra nada: en el telefono no
+  se puede seleccionar ni un nodo ni una barra. En Windows no pasa porque
+  ese build no quita codigo del motor.
+-->
+<linker>
+  <assembly fullname="UnityEngine.PhysicsModule">
+    <type fullname="UnityEngine.Collider" preserve="all"/>
+    <type fullname="UnityEngine.SphereCollider" preserve="all"/>
+    <type fullname="UnityEngine.CapsuleCollider" preserve="all"/>
+    <type fullname="UnityEngine.BoxCollider" preserve="all"/>
+    <type fullname="UnityEngine.MeshCollider" preserve="all"/>
+  </assembly>
+</linker>

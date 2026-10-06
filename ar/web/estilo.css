@@ -1,0 +1,42 @@
+/* [hidden] tiene que ganarle a los display de abajo: sin esto, la pantalla
+   de inicio (display:flex) no se ocultaba al elegir el modo. */
+[hidden] { display: none !important; }
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: #111; color: #fff;
+  font-family: -apple-system, system-ui, "Segoe UI", sans-serif; -webkit-user-select: none; user-select: none; }
+#ar { position: fixed; inset: 0; }
+
+#inicio { position: fixed; inset: 0; z-index: 30; background: #1f3a5f; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 24px; box-sizing: border-box; }
+#inicio h1 { margin: 0 0 6px; font-size: 24px; }
+#inicio p { margin: 4px 0; opacity: .9; }
+#inicio .fila { display: flex; gap: 12px; margin: 22px 0 10px; flex-wrap: wrap; justify-content: center; }
+#inicio button.modo { background: #fff; color: #1f3a5f; border: 0; border-radius: 12px; padding: 14px 18px;
+  font-size: 18px; font-weight: 600; min-width: 150px; }
+#inicio button.modo small { font-weight: 400; font-size: 12px; opacity: .8; }
+.nota { font-size: 12px; opacity: .75; }
+
+#barra { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 20; display: flex;
+  justify-content: space-between; gap: 8px; padding: 8px 12px; background: rgba(0,0,0,.55); font-size: 13px; }
+#estado.ok { color: #7ee2a2; font-weight: 600; }
+
+#panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(20,24,32,.92);
+  border-top: 2px solid #c8641e; max-height: 52vh; overflow-y: auto; padding-bottom: env(safe-area-inset-bottom, 0px); }
+#panel.plegado #cuerpo { display: none; }
+#cabeza { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; font-size: 15px; }
+#cabeza button { background: none; border: 0; color: #fff; font-size: 20px; }
+#cuerpo { padding: 0 12px 10px; }
+.controles { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; margin-bottom: 8px; align-items: center; }
+.controles select { font-size: 14px; }
+#datos table { border-collapse: collapse; font-size: 12.5px; width: 100%; margin: 4px 0 8px; }
+#datos td, #datos th { border-bottom: 1px solid #3a4150; padding: 3px 6px; text-align: right; }
+#datos td:first-child, #datos th:first-child { text-align: left; }
+#datos .pasa { color: #7ee2a2; font-weight: 700; } #datos .nopasa { color: #ff7b7b; font-weight: 700; }
+#datos .tag { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; opacity: .85; word-break: break-all; }
+#pm { width: 100%; max-width: 600px; background: #fff; border-radius: 6px; }
+
+@media (orientation: landscape) {
+  #panel { left: auto; top: calc(40px + env(safe-area-inset-top, 0px)); width: 42vw; max-height: none; border-top: 0;
+    border-left: 2px solid #c8641e; }
+  #panel.plegado { bottom: auto; }
+}

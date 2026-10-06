@@ -1,0 +1,21 @@
+Item: pasto
+Asset: Grass 005 (Grass005)
+Fuente: ambientCG
+Pagina: https://ambientcg.com/view?id=Grass005
+Autor: la pagina del asset no indica autor
+Licencia: CC0 (texto literal de las paginas, consultadas el 2026-10-05):
+Pagina del asset: "All assets are released under the Creative Commons CC0 license, making them free to use without attribution - even in commercial circumstances."
+Pagina de licencia (https://ambientcg.com/license -> https://docs.ambientcg.com/license/): "All ambientCG assets are provided under the Creative Commons CC0 1.0 Universal License. This applies to the downloadable asset files and the material preview renders shown for each asset on the site."
+
+Descargado (sin iniciar sesion):
+  https://ambientcg.com/get?file=Grass005_1K-JPG.zip   (redirige a https://acg-download.struffelproductions.com/file/ambientCG-Web/download/... )
+  (descomprimido; se tomaron _Color -> color.jpg, _NormalGL -> normal_gl.jpg, _Roughness -> roughness.jpg, _AmbientOcclusion -> ao.jpg y se descarto el resto: Displacement, NormalDX, .blend, .usdc, .mtlx, .tres y la vista previa .png)
+
+Archivos en esta carpeta:
+  ao.jpg             981,258 bytes  md5 a647dd86d3fa0a6a1a97a316bfb29c2a
+  color.jpg        1,875,015 bytes  md5 fbde5ad8ba708604624b8d59da55b184
+  normal_gl.jpg    2,137,845 bytes  md5 fbc65c011ec4f8c936c2507a3f0c5e8a
+  roughness.jpg      851,896 bytes  md5 0042c2d490bd59675d45e5afe1b01250
+
+Notas: Metodo: PBRProcedural. Escala real: no declarada.
+Por que se eligio: Cesped corto solo de hojas de pasto (sin trebol ni hojas como Grass006/Grass001), verde parejo; repetido 6x6 no se nota el patron.

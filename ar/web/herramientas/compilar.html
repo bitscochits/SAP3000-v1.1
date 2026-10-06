@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Compilar la imagen de referencia</title>
+<!--
+  Convierte marcador.png en targets.mind: los puntos caracteristicos de la
+  imagen, a varias escalas, que MindAR busca en cada cuadro de la camara.
+  Lo corre marcador/compilar_marcador.py en Chrome sin ventana; abierto a
+  mano (python semana06_lab/servir.py --http) hace lo mismo.
+-->
+<body style="font-family:system-ui;margin:24px">
+<h3>Compilar marcador.png -> targets.mind</h3>
+<p id="estado">cargando...</p>
+<script type="module">
+import { Compiler } from '../vendor/mindar/mindar-image.prod.js';
+
+const estado = document.getElementById('estado');
+const decir = (t) => { estado.textContent = t; console.log('COMPILAR ' + t); };
+
+const q = new URLSearchParams(location.search);
+const fuente = q.get('img') || '../marcador.png';
+const guardar = q.get('guardar') !== '0';
+const img = new Image();
+img.src = fuente + '?' + Date.now();
+await img.decode();
+decir('imagen ' + img.naturalWidth + 'x' + img.naturalHeight + ', compilando');
+
+const compiler = new Compiler();
+const t0 = performance.now();
+const datos = await compiler.compileImageTargets([img], (p) => decir('avance ' + p.toFixed(0) + ' %'));
+const buffer = await compiler.exportData();
+const puntos = datos.map(d => d.trackingData.map(t => t.points.length));
+const match = datos.map(d => d.matchingData.map(m => m.maximaPoints.length + m.minimaPoints.length));
+decir('listo en ' + ((performance.now() - t0) / 1000).toFixed(1) + ' s; puntos de tracking por escala ' + JSON.stringify(puntos) + '; puntos de deteccion por escala ' + JSON.stringify(match));
+if (!guardar) { decir('FIN sin guardar'); throw new Error('fin'); }
+
+const r = await fetch('/guardar?nombre=targets.mind', { method: 'POST', body: buffer });
+decir(r.ok ? 'GUARDADO targets.mind (' + buffer.byteLength + ' bytes)' : 'ERROR al guardar: ' + r.status);
+</script>
+</body>

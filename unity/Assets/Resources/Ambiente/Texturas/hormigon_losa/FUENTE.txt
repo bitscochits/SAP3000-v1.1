@@ -1,0 +1,20 @@
+Item: hormigon_losa
+Asset: Concrete 024 (Concrete024)
+Fuente: ambientCG
+Pagina: https://ambientcg.com/view?id=Concrete024
+Autor: la pagina del asset no indica autor
+Licencia: CC0 (texto literal de las paginas, consultadas el 2026-10-05):
+Pagina del asset: "All assets are released under the Creative Commons CC0 license, making them free to use without attribution - even in commercial circumstances."
+Pagina de licencia (https://ambientcg.com/license -> https://docs.ambientcg.com/license/): "All ambientCG assets are provided under the Creative Commons CC0 1.0 Universal License. This applies to the downloadable asset files and the material preview renders shown for each asset on the site."
+
+Descargado (sin iniciar sesion):
+  https://ambientcg.com/get?file=Concrete024_1K-JPG.zip   (redirige a https://acg-download.struffelproductions.com/file/ambientCG-Web/download/... )
+  (descomprimido; se tomaron _Color -> color.jpg, _NormalGL -> normal_gl.jpg, _Roughness -> roughness.jpg y se descarto el resto: Displacement, NormalDX, .blend, .usdc, .mtlx, .tres y la vista previa .png)
+
+Archivos en esta carpeta:
+  color.jpg        1,059,084 bytes  md5 eb0744cf9b88d6a9c8079fd643b7b4f4
+  normal_gl.jpg    2,036,854 bytes  md5 6639900b0948685829a00cec1ab9ac82
+  roughness.jpg      451,376 bytes  md5 d88cf9534a0d330618cabc40ca71a4c4
+
+Notas: Metodo: PBRProcedural. Escala real: no declarada. No trae AO (el asset no lo tiene).
+Por que se eligio: Hormigon liso y muy parejo (variacion de baja frecuencia la mitad que Concrete006), gris levemente calido (sRGB 137,134,132); el mejor repetido de los ~45 hormigones revisados.

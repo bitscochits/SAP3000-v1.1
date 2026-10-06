@@ -1,0 +1,18 @@
+Item: cielo
+Asset: Kloofendal 48d Partly Cloudy (Pure Sky) (kloofendal_48d_partly_cloudy_puresky)
+Fuente: Poly Haven
+Pagina: https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky
+Autor: Greg Zaal (original), Jarod Guest (edicion solo cielo)
+Licencia: CC0 (texto literal de las paginas, consultadas el 2026-10-05):
+Pagina del asset: "CC0 License"
+Pagina de licencia (https://polyhaven.com/license): "All assets ( HDRIs , textures and 3D models ) on this site are the original work of Poly Haven staff, or artists who willingly and directly donate/sell their work to Poly Haven." / "Our assets are all licensed as CC0 , which is effectively Public Domain even in jurisdictions that do not support the Public Domain."
+
+Descargado (sin iniciar sesion):
+  https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/kloofendal_48d_partly_cloudy_puresky_2k.hdr  -> cielo_2k.hdr
+  (URL obtenida de https://api.polyhaven.com/files/kloofendal_48d_partly_cloudy_puresky; md5 2eba3a4d7eeb23cbfbeca364c97e7980 comprobado)
+
+Archivos en esta carpeta:
+  cielo_2k.hdr     5,451,493 bytes  md5 2eba3a4d7eeb23cbfbeca364c97e7980
+
+Notas: 2048 x 1024, Radiance RGBE (.hdr), 21 EV, balance de blancos 5400 K, categoria Pure Skies / midday / partly cloudy. Sol medido en el archivo: pixel mas brillante en la fila 239 de 1024 -> elevacion 47.9 grados (coincide con el "48d" del nombre).
+Por que se eligio: Cielo azul con cumulos, sol a ~48 grados, horizonte limpio (version "puresky", sin terreno); es el puresky mas descargado de Poly Haven.

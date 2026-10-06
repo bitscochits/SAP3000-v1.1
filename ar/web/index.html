@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>LAB AR · Grupo 7</title>
+<link rel="stylesheet" href="estilo.css">
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three/three.module.min.js",
+    "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+</head>
+<body>
+<div id="ar"></div>
+
+<div id="inicio">
+  <h1>Edificio de Ingeniería · AR</h1>
+  <p>Grupo 7 · Métodos Computacionales en Obras Civiles</p>
+  <p id="resumen">cargando el modelo…</p>
+  <div class="fila">
+    <button class="modo" data-modo="maqueta">Maqueta<br><small>imagen sobre la mesa, 1:50</small></button>
+    <button class="modo" data-modo="sitio">En sitio<br><small>imagen en la columna, 1:1</small></button>
+  </div>
+  <p class="nota">Apunta la cámara a la imagen impresa. Safari va a pedir permiso para la cámara.</p>
+</div>
+
+<div id="barra">
+  <span id="estado">buscando la imagen…</span>
+  <span id="pose"></span>
+</div>
+
+<div id="panel" hidden>
+  <div id="cabeza">
+    <b id="titulo"></b>
+    <button id="plegar">▾</button>
+  </div>
+  <div id="cuerpo">
+    <div class="controles">
+      <label>Caso <select id="caso"></select></label>
+      <label>Diagrama <select id="magnitud">
+        <option value="Mz">Mz</option><option value="My">My</option>
+        <option value="N">N</option><option value="Vy">Vy</option><option value="Vz">Vz</option>
+        <option value="T">T</option><option value="">ninguno</option>
+      </select></label>
+      <label><input type="checkbox" id="deformada"> deformada</label>
+      <label><input type="checkbox" id="tributarias"> áreas tributarias</label>
+      <label><input type="checkbox" id="etiquetas" checked> tags</label>
+    </div>
+    <div id="datos"></div>
+    <canvas id="pm" width="600" height="360"></canvas>
+    <p class="nota" id="origen"></p>
+  </div>
+</div>
+
+<script type="module" src="ar.js"></script>
+</body>
+</html>

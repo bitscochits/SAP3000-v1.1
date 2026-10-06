@@ -1,0 +1,21 @@
+{
+ "items": [
+  {
+   "item": "pasto",
+   "escala": 0.01
+  },
+  {
+   "item": "tierra",
+   "escala": 0.01
+  },
+  {
+   "item": "hormigon_visto",
+   "escala": 0.05
+  },
+  {
+   "item": "hormigon_losa",
+   "escala": 0.05
+  }
+ ],
+ "_por_que": "Escala del mapa de detalle (URP/Lit _DetailAlbedoMap, x2) de cada material, respecto de la base. La calcula comun/recursos_realistas.py (DETALLES) y la aplica Editor/RecursosRealistas.cs."
+}

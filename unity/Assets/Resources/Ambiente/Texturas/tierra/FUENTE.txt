@@ -1,0 +1,24 @@
+Item: tierra
+Asset: Forest Ground 05 (forest_ground_05)
+Fuente: Poly Haven
+Pagina: https://polyhaven.com/a/forest_ground_05
+Autor: Charlotte Baglioni
+Licencia: CC0 (texto literal de las paginas, consultadas el 2026-10-05):
+Pagina del asset: "CC0 License"
+Pagina de licencia (https://polyhaven.com/license): "All assets ( HDRIs , textures and 3D models ) on this site are the original work of Poly Haven staff, or artists who willingly and directly donate/sell their work to Poly Haven." / "Our assets are all licensed as CC0 , which is effectively Public Domain even in jurisdictions that do not support the Public Domain."
+
+Descargado (sin iniciar sesion):
+  https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_05/forest_ground_05_diff_1k.jpg  -> color.jpg
+  https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_05/forest_ground_05_nor_gl_1k.jpg  -> normal_gl.jpg
+  https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_05/forest_ground_05_rough_1k.jpg  -> roughness.jpg
+  https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_05/forest_ground_05_ao_1k.jpg  -> ao.jpg
+  (URLs obtenidas de https://api.polyhaven.com/files/forest_ground_05; md5 comprobado contra la API)
+
+Archivos en esta carpeta:
+  ao.jpg             849,001 bytes  md5 da97b6d142a306674afb5c2090ebed35
+  color.jpg          655,934 bytes  md5 7fcf121f5d2ac2ffe665d42d5fe69478
+  normal_gl.jpg    1,167,042 bytes  md5 4fd06cb053e3124afd06fbd2d87caa74
+  roughness.jpg      330,104 bytes  md5 c2619569b0867614b003f4b947ecf329
+
+Notas: Escala real declarada: 2 m de ancho (dimensions 2000 x 2000 mm). Escaneo de suelo compacto de bosque (Ichikawa, Japon).
+Por que se eligio: Tierra compacta marron (sRGB 88,68,46) con grava fina, la mas pareja de las 20 tierras revisadas; 2 m reales = el tamano de repeticion pedido.

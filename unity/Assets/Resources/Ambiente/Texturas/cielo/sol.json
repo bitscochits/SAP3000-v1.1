@@ -1,0 +1,8 @@
+{
+ "giro_grados": 120.811,
+ "phi_hdri_grados": -34.189,
+ "elevacion_hdri_grados": 47.9,
+ "phi_luz_grados": -155.0,
+ "elevacion_luz_grados": 50.0,
+ "_por_que": "Giro del Skybox/Panoramic (_Rotation) que pone el sol del HDRI en el rumbo de la luz direccional de la vista realista (AmbienteVisor.SOL_REALISTA). Lo calcula comun/recursos_realistas.py; lo aplica Editor/RecursosRealistas.cs."
+}

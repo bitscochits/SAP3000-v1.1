@@ -1,0 +1,16 @@
+# Dependencias de SAP3000 v1.1. Las instala setup.ps1 en .venv.
+# Versiones FIJAS: son las que dieron los numeros de control (CLAUDE.md).
+# Cambiar openseespy o numpy puede mover el ultimo decimal de un resultado.
+
+openseespy==3.8.0.0    # motor de calculo
+numpy==2.5.3
+flask==3.1.3           # servidor de reanalisis (Unity -> Python)
+openpyxl==3.1.5        # libros Excel de resultados
+matplotlib==3.11.2     # graficos de capacidad (curva P-M, M-phi, fibras)
+pillow==12.3.0         # texturas de la vista realista y marcador de la AR
+
+# Opcional, solo para volver a bajar el relieve del sitio (sap.py relieve --bajar-dem):
+# requests==2.34.2
+
+# Unity NO se instala con pip: Unity Hub, version 6000.5.10f1
+# (unity/ProjectSettings/ProjectVersion.txt).

@@ -1,0 +1,21 @@
+Item: hormigon_visto
+Asset: Concrete 006 (Concrete006)
+Fuente: ambientCG
+Pagina: https://ambientcg.com/view?id=Concrete006
+Autor: la pagina del asset no indica autor
+Licencia: CC0 (texto literal de las paginas, consultadas el 2026-10-05):
+Pagina del asset: "All assets are released under the Creative Commons CC0 license, making them free to use without attribution - even in commercial circumstances."
+Pagina de licencia (https://ambientcg.com/license -> https://docs.ambientcg.com/license/): "All ambientCG assets are provided under the Creative Commons CC0 1.0 Universal License. This applies to the downloadable asset files and the material preview renders shown for each asset on the site."
+
+Descargado (sin iniciar sesion):
+  https://ambientcg.com/get?file=Concrete006_1K-JPG.zip   (redirige a https://acg-download.struffelproductions.com/file/ambientCG-Web/download/... )
+  (descomprimido; se tomaron _Color -> color.jpg, _NormalGL -> normal_gl.jpg, _Roughness -> roughness.jpg, _AmbientOcclusion -> ao.jpg y se descarto el resto: Displacement, NormalDX, .blend, .usdc, .mtlx, .tres y la vista previa .png)
+
+Archivos en esta carpeta:
+  ao.jpg             329,588 bytes  md5 ef7887628ba78e027ae62d919092a6e6
+  color.jpg          498,784 bytes  md5 9948aceb988db5a577161bff8dd1456c
+  normal_gl.jpg    2,289,603 bytes  md5 e34d8eb329019e71c43300b156cc0a63
+  roughness.jpg      607,432 bytes  md5 b78894c2e6b3e6589fd6b4fed34202df
+
+Notas: Metodo: PBRApproximated (foto). Escala real: el sitio no la declara (dimensionX/Y = 0 en la API). color.jpg es JPEG en escala de grises (1 canal); Unity lo importa como RGB con el tipo "Default".
+Por que se eligio: Gris neutro (sRGB medio 135), poros finos y vetas verticales suaves como de moldaje; sin manchas grandes; costura invisible al repetir.

@@ -1,0 +1,21 @@
+# SAP3000 v1.1 -- repo LOCAL, sin remoto (no se sube a ningun lado).
+.venv/
+__pycache__/
+*.pyc
+# Unity: cache y app compilada (regenerables)
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/UserSettings/
+unity/obj/
+unity/*.csproj
+unity/*.sln
+unity/*.slnx
+unity/.vscode/
+build/
+# certificado autofirmado de la app AR (lo crea el servidor web)
+ar/.cert/
+# Excel deja un candado temporal al lado del libro abierto
+~$*.xlsx
+Thumbs.db
+desktop.ini
