@@ -1,0 +1,27 @@
+{
+  "_que_es": "Como se ubica el relieve del sitio sobre el modelo del conjunto. Lo lee edificios/conjunto/topografia.py. Todo lo que aca no se mide se declara como supuesto, con su por que.",
+
+  "recorrido": "topo_uandes.kmz",
+  "_recorrido_por_que": "Trazo de Google Earth Pro (Eduardo, 05-10) que cubre la zona donde se quiere el relieve. Solo da la zona: Google Earth lo guardo pegado al terreno, con altura 0 en sus 629 puntos.",
+
+  "techo": "techo_edificio_antiguo.kmz",
+  "_techo_por_que": "Poligono de 4 vertices trazado en Google Earth sobre el techo del cuerpo antiguo (el LT2 todavia no aparece en las imagenes). Es la unica referencia comun entre la foto y el modelo, asi que de el salen el giro y la posicion.",
+
+  "dem": "dem_copernicus_glo30.json",
+  "_dem_por_que": "Las cotas: Copernicus DEM GLO-30, bajado con bajar_dem.py. Celda de ~30 m: da la pendiente del campus, no taludes ni calles. Es un modelo de superficie de 2011-2015, anterior al LT2.",
+
+  "techo_en_el_modelo": {"x": [8.02, 58.02], "y": [47.70, 64.10], "z": 11.83},
+  "_techo_en_el_modelo_por_que": "El rectangulo principal del ultimo piso del cuerpo antiguo, entre ejes (nodos del conjunto en z 11.83). El saliente del lado sur (x 28 a 38, hasta y 43.83) no esta en el trazo de Google Earth, que es un rectangulo. El trazo mide por fuera de la losa, asi que es algo mas grande que el rectangulo entre ejes: medio pilar (0.35 m) mas el borde de la losa por lado.",
+
+  "x_del_modelo_hacia": "ENE",
+  "_x_del_modelo_hacia_por_que": "El lado largo del techo apunta a 72 o a 252 grados (el poligono no distingue los extremos). Se elige que +x del modelo apunte al ENE (72): el modelo baja escalonado hacia -x (apoyos en -7.97 al oeste y en la terraza -4.01 al este) y el terreno de Copernicus sube hacia el este, hacia la cordillera. topografia.py lo comprueba: la pendiente del terreno a lo largo del edificio tiene que subir hacia +x.",
+
+  "paso_m": 4.0,
+  "_paso_m_por_que": "Lado de la malla del relieve. El DEM tiene ~30 m: con 4 m la interpolacion bilineal se ve suave y la malla queda en unos miles de vertices.",
+
+  "margen_hueco_m": 1.0,
+  "_margen_hueco_m_por_que": "El relieve no se dibuja sobre la planta de cada cuerpo mas este margen: ahi esta la excavacion del edificio, que la dibujan el suelo y las terrazas de AmbienteVisor. 1.0 m es el MARGEN de HuecoDelSuelo.",
+
+  "datum_vertical": "apoyos",
+  "_datum_vertical_por_que": "El DEM da cotas sobre el nivel del mar; el modelo, cotas propias. Se corre el DEM verticalmente por minimos cuadrados para que el terreno calce con los apoyos en terreno del modelo (45 en -7.97 y 39 en la terraza -4.01): es la misma convencion del repo, 'el suelo va donde arranca la estructura'. El residuo se informa: dice cuanto se aleja el terreno natural (anterior a la obra) de los niveles de fundacion."
+}

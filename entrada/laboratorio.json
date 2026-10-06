@@ -1,0 +1,371 @@
+{
+ "_que_es": [
+  "LO QUE EL LABORATORIO LE PIDE AL EDIFICIO.",
+  "",
+  "El edificio esta en edificio.json; aca esta lo que se le hace: la sobrecarga y el",
+  "sismo que define el profesor, las combinaciones, los estados de la superposicion,",
+  "las modificaciones de demostracion, el recorrido de la carga movil, la persona y",
+  "la app de realidad aumentada. Editar este archivo NO cambia el modelo: cambia lo",
+  "que se le pide.",
+  "",
+  "Todo lo de \"parametros\" se puede sobreescribir por linea de comandos sin tocar el",
+  "archivo, que es lo que sirve si se dicta en vivo:",
+  "",
+  "    python sap.py preparar --uso oficinas --cs 0.15 --comb 1.2 1.6 1.0 0.3",
+  "",
+  "Las claves que empiezan con \"_\" son explicacion; ningun calculo las lee."
+ ],
+ "parametros": {
+  "carga_viva": {
+   "q_kNm2": 3.0,
+   "uso": "salas_de_clases",
+   "_q_kNm2": [
+    "Sobrecarga de uso con la que se corre el laboratorio. Se aplica",
+    "reconstruyendo en memoria el caso Q del modelo a q_Q en cada",
+    "elemento, sin tocar el JSON del modelo.",
+    "",
+    "DE DONDE SALE. NCh1537 Of.2009, Tabla 4 (cargas de uso uniformemente",
+    "distribuidas para pisos y techos). El edificio de Ingenieria es una",
+    "facultad: su uso predominante son salas de clases, 3.0 kN/m2. Los",
+    "pasillos van a 4.0 y las areas de uso publico a 5.0, pero el",
+    "enunciado trabaja con UNA intensidad para toda la losa, y la",
+    "representativa del piso tipo es la de las salas. El techo, si solo",
+    "se accede para mantencion, iria a 1.0: con una sola q queda del lado",
+    "conservador. Para otro uso: --uso pasillos, --uso oficinas, etc.",
+    "",
+    "LO QUE HABIA. El modelo del cuerpo antiguo trae Q a 2.0 kN/m2 parejo",
+    "(supuestos.ingenieria.constantes_del_modelo del edificio). Es un valor de",
+    "trabajo sin fuente normativa: no sale del plano ni de NCh1537. Sigue",
+    "en el caso Q de la estructura (casos del modelo), pero el laboratorio no lo usa.",
+    "",
+    "El LT2 trae del plano de cargas 500 kgf/m2 hasta el piso 3 y 300 en",
+    "el techo (4.9033 y 2.9420 kN/m2). Con q_Q = 3.0 corre por debajo de",
+    "su plano en los pisos y por encima en el techo. Es lo que pide el",
+    "enunciado: una intensidad, la misma para todos.",
+    "",
+    "No se aplica la reduccion por area tributaria de NCh1537 8.1: el",
+    "laboratorio es sobre una intensidad uniforme. Queda del lado seguro."
+   ],
+   "nch1537": {
+    "norma": "NCh1537 Of.2009, Tabla 4",
+    "titulo": "Diseno estructural - Cargas permanentes y cargas de uso",
+    "valores_kNm2": {
+     "salas_de_clases": 3.0,
+     "pasillos": 4.0,
+     "oficinas": 2.5,
+     "bibliotecas_lectura": 3.0,
+     "escaleras": 5.0,
+     "uso_publico": 5.0,
+     "techo_mantencion": 1.0
+    },
+    "_valores": [
+     "Las filas de la Tabla 4 que le interesan a un edificio de facultad.",
+     "'oficinas' es la fila de oficinas privadas sin equipos; con equipos",
+     "la norma sube a 5.0. 'escaleras' son escaleras y vias de evacuacion.",
+     "'uso_publico' son corredores y lugares de uso publico. Laboratorios",
+     "no tiene fila propia en la Tabla 4.",
+     "",
+     "Se eligen por nombre:  --uso oficinas      (pone q_Q = 2.5)",
+     "Un numero cualquiera:  --q 2.7            (queda marcado 'dictado')"
+    ]
+   }
+  },
+  "sismo": {
+   "coeficiente": 0.1,
+   "fraccion_Q": 0.5,
+   "_coeficiente": [
+    "Corte basal como fraccion del peso sismico: V = c * W.",
+    "",
+    "El enunciado da como ejemplo el 0.20 de g que NCh433 asocia a la",
+    "zona del edificio. 0.10 es el valor de trabajo actual; hay que",
+    "reemplazarlo por el que pida el profesor."
+   ],
+   "_fraccion_Q": [
+    "Cuanta sobrecarga entra en el peso sismico:  W = G + f * Q.",
+    "El enunciado pide 50%."
+   ],
+   "patron": "potencia",
+   "k_patron": 1.0,
+   "fracciones_patron": [],
+   "_patron": [
+    "COMO SE REPARTE EL CORTE BASAL EN ALTURA.",
+    "",
+    "El enunciado dice que el patron lo define el profesor y que el",
+    "codigo debe acomodar cualquier solicitud. Hay tres formas:",
+    "",
+    "   \"potencia\"   F_i proporcional a  W_i * h_i**k_patron",
+    "                 Es la forma de ASCE 7 12.8.3, que da k entre 1 y 2",
+    "                 segun el periodo: k = 1 hasta T = 0.5 s, k = 2",
+    "                 desde T = 2.5 s, interpolando en medio.",
+    "                 k = 0 da el reparto uniforme, solo por masa.",
+    "",
+    "   \"nch433\"    el reparto de la norma chilena, NCh433 Of.1996",
+    "                 Mod.2009 articulo 6.2.6. NO usa exponente:",
+    "                   A_k = raiz(1 - Z_(k-1)/H) - raiz(1 - Z_k/H)",
+    "                   F_k = A_k P_k / suma(A_j P_j) * Q_0",
+    "",
+    "   \"manual\"     se usan fracciones_patron, de abajo hacia arriba.",
+    "                 Se normalizan solas, asi que da igual entregarlas",
+    "                 como porcentajes o como pesos crudos.",
+    "",
+    "Por linea de comandos:  --patron nch433",
+    "                        --patron potencia --k 2",
+    "                        --patron manual --fracciones 5 10 20 30 35"
+   ]
+  },
+  "combinaciones": [
+   {
+    "nombre": "S3",
+    "G": 1.0,
+    "Q": 0.5,
+    "EX": 1.0,
+    "EY": 0.0,
+    "_por_que": "La combinacion de trabajo del laboratorio, la que venia declarada desde el principio. Se conserva como la de por defecto para que sus numeros no cambien."
+   },
+   {
+    "nombre": "1.4G",
+    "G": 1.4,
+    "Q": 0.0,
+    "EX": 0.0,
+    "EY": 0.0,
+    "_por_que": "Peso propio mayorado solo. Manda en elementos muy cargados y poco solicitados por sismo."
+   },
+   {
+    "nombre": "1.2G+1.6Q",
+    "G": 1.2,
+    "Q": 1.6,
+    "EX": 0.0,
+    "EY": 0.0,
+    "_por_que": "Gravedad mayorada, ACI 318-08 9.2.1 / NCh3171. Manda en vigas y losas."
+   },
+   {
+    "nombre": "1.2G+1.0Q+1.4EX",
+    "G": 1.2,
+    "Q": 1.0,
+    "EX": 1.4,
+    "EY": 0.0,
+    "_por_que": "Sismo en X. NCh3171 usa 1.4E porque el corte basal de NCh433 esta a nivel de servicio."
+   },
+   {
+    "nombre": "1.2G+1.0Q+1.4EY",
+    "G": 1.2,
+    "Q": 1.0,
+    "EX": 0.0,
+    "EY": 1.4,
+    "_por_que": "Sismo en Y."
+   },
+   {
+    "nombre": "1.2G+1.0Q-1.4EX",
+    "G": 1.2,
+    "Q": 1.0,
+    "EX": -1.4,
+    "EY": 0.0,
+    "_por_que": "El sismo actua en los DOS sentidos, y en un modelo lineal -E no es la misma demanda: cambia el signo del axial sismico, asi que la pata de nucleo que con +EX esta comprimida pasa a traccionada. Sin esta combinacion el mapa D/C es optimista."
+   },
+   {
+    "nombre": "1.2G+1.0Q-1.4EY",
+    "G": 1.2,
+    "Q": 1.0,
+    "EX": 0.0,
+    "EY": -1.4,
+    "_por_que": "Sismo en Y, sentido contrario. Ver 1.2G+1.0Q-1.4EX."
+   },
+   {
+    "nombre": "0.9G+1.4EX",
+    "G": 0.9,
+    "Q": 0.0,
+    "EX": 1.4,
+    "EY": 0.0,
+    "_por_que": "Gravedad MINIMA con sismo, ACI 318-08 9.2.1 (9-7) / NCh3171. Es la que manda en traccion de muros y de columnas de borde: con 1.2G la compresion de la gravedad tapa la traccion del sismo. Se usa 0.9 y no 1.2 porque el peso propio, cuando ayuda, no se puede mayorar."
+   },
+   {
+    "nombre": "0.9G-1.4EX",
+    "G": 0.9,
+    "Q": 0.0,
+    "EX": -1.4,
+    "EY": 0.0,
+    "_por_que": "Gravedad minima, sismo en X en el otro sentido."
+   },
+   {
+    "nombre": "0.9G+1.4EY",
+    "G": 0.9,
+    "Q": 0.0,
+    "EX": 0.0,
+    "EY": 1.4,
+    "_por_que": "Gravedad minima, sismo en Y."
+   },
+   {
+    "nombre": "0.9G-1.4EY",
+    "G": 0.9,
+    "Q": 0.0,
+    "EX": 0.0,
+    "EY": -1.4,
+    "_por_que": "Gravedad minima, sismo en Y en el otro sentido."
+   }
+  ],
+  "combinacion_por_defecto": "S3"
+ },
+ "superposicion": {
+  "_que_es": [
+   "LOS ESTADOS DE SUPERPOSICION Y LOS RANGOS DE LOS SLIDERS.",
+   "",
+   "Una sola copia. La leen exportar/resultados.py (los precalcula en el bloque",
+   "'superposicion' de salidas/resultados.json), el servidor (GET /estados) y la",
+   "verificacion de la superposicion (los compara contra una corrida explicita de",
+   "OpenSees). Cambiar un lambda aca cambia los tres.",
+   "",
+   "Las claves que empiezan con '_' son explicacion: el servidor no las manda a Unity."
+  ],
+  "estados": [
+   {
+    "nombre": "E1",
+    "descripcion": "1.0G + 1.0Q",
+    "lambdas": {
+     "G": 1.0,
+     "Q": 1.0,
+     "EX": 0.0,
+     "EY": 0.0
+    },
+    "_por_que": "Servicio: la carga de un dia cualquiera, sin mayorar. No esta entre las combinaciones de parametros, asi que es un estado que los casos del laboratorio no traian: prueba que la combinacion sale de Python en el momento y no de un boton precalculado."
+   },
+   {
+    "nombre": "E2",
+    "descripcion": "1.2G + 1.6Q",
+    "lambdas": {
+     "G": 1.2,
+     "Q": 1.6,
+     "EX": 0.0,
+     "EY": 0.0
+    },
+    "_por_que": "Gravedad mayorada (ACI 318 / NCh3171), la misma '1.2G+1.6Q' de parametros. Como ya es un caso de los resultados, sirve de control cruzado: el estado libre tiene que salir identico al precalculado."
+   },
+   {
+    "nombre": "E3",
+    "descripcion": "1.2G + 1.0Q - 1.4EX",
+    "lambdas": {
+     "G": 1.2,
+     "Q": 1.0,
+     "EX": -1.4,
+     "EY": 0.0
+    },
+    "_por_que": "Sismo hacia -X: un lambda NEGATIVO, que ninguna combinacion declarada tiene (la de parametros es +1.4EX). Invierte el signo del sismo y con eso cambia que extremo manda y que muros fallan: junta en un mismo estado elementos que pasan, que no pasan y alguno fuera de su curva P-M."
+   }
+  ],
+  "rangos": {
+   "G": {
+    "min": 0.0,
+    "max": 1.6,
+    "paso": 0.05
+   },
+   "Q": {
+    "min": 0.0,
+    "max": 1.6,
+    "paso": 0.05
+   },
+   "EX": {
+    "min": -1.4,
+    "max": 1.4,
+    "paso": 0.05
+   },
+   "EY": {
+    "min": -1.4,
+    "max": 1.4,
+    "paso": 0.05
+   },
+   "_por_que": [
+    "Son los rangos de los SLIDERS de Unity, no una validacion: POST /combinar",
+    "acepta cualquier lambda finito.",
+    "G y Q de 0 a 1.6 cubren desde 'sin la carga' hasta el mayor factor de",
+    "carga de NCh3171 (1.6Q). EX y EY de -1.4 a 1.4 porque el sismo actua en",
+    "los dos sentidos y NCh3171 lo mayora por 1.4. Paso 0.05: dos decimales,",
+    "los mismos con que la descripcion escribe cada factor."
+   ]
+  },
+  "control": {
+   "_que_es": [
+    "Los elementos que la verificacion compara contra lo que muestra Unity en",
+    "E1..E3. Se eligen por REGLA, no a mano, y la verificacion rehace la regla: si",
+    "el edificio cambia y la regla da otro id, lo dice en vez de comparar contra un",
+    "elemento que ya no es el representativo."
+   ],
+   "reglas": {
+    "columna": "info.columna_demo de los resultados: la columna con fierro de mayor axial en G",
+    "muro": "info.muro_demo de los resultados: el muro con fierro mas largo (h de su seccion)",
+    "viga": "la barra de tipo viga* con mayor |My| en alguna estacion bajo E1",
+    "nodo": "el nodo con mayor desplazamiento (norma de ux, uy, uz) bajo E1"
+   },
+   "esperados": {
+    "columna": 200005,
+    "muro": 100537,
+    "viga": 100138,
+    "nodo": 100564
+   }
+  }
+ },
+ "modificaciones": {
+  "_que_es": "Las cuatro modificaciones de la pestana Modificar que se reproducen sin Unity (sap.py revisar m1..m4) y que la captura del visor ejecuta en la app.",
+  "M1": {
+   "borrar_elemento": 200069,
+   "nodo": 200186,
+   "elemento": 200337,
+   "_por_que": "borrar una columna del LT2 y ver cuanto baja el nodo de arriba"
+  },
+  "M2": {
+   "cs": 0.2,
+   "_por_que": "cambiar el coeficiente sismico sin escribir nada"
+  },
+  "M3": {
+   "elemento": 200337,
+   "seccion": "lt2:V 0.30x0.80",
+   "nodo": 200186,
+   "_por_que": "cambiar la seccion de una viga"
+  },
+  "M4": {
+   "nodo_apoyo": 200002,
+   "restricciones": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "nodo": 200186,
+   "_por_que": "soltar los giros de un apoyo"
+  }
+ },
+ "carga_movil": {
+  "z": 3.91,
+  "eje": "x",
+  "coord": 55.0833,
+  "P_kN": 100.0,
+  "divisiones": 5,
+  "largo_dibujo_m": 1.5,
+  "_por_que": "Primer piso del LT2 (+3.91), eje y = 55.0833: seis vigas V 0.60x0.80 continuas entre la columna del nodo 200101 y la cara del muro del nodo 200122. Alterna nodos con columna (200101, 200102, 200103) y cruces de viga sin columna (200121, 200116, 200119), asi que el reparto cambia de una viga a otra y la deformada se ve."
+ },
+ "ar": {
+  "_que_es": "Donde se pega la imagen de referencia en el edificio real y como se muestra. Es lo UNICO que hay que cambiar para usar otro elemento: despues se corre python sap.py ar marcador y python sap.py preparar.",
+  "elemento": 200037,
+  "_elemento_por_que": "Columna lt2:P 0.70x0.70 del eje C del LT2, de z = -0.05 a 3.91 m: la TERCERA de su eje desde la base (200005 de -7.97 a -4.01, 200021 de -4.01 a -0.05, 200037). Por los titulos de las laminas (supuestos.lt2.niveles_del_modelo del edificio) -0.05 es el cielo del piso 1, o sea que es la columna del PISO 2; como el edificio esta en pendiente, hay que confirmar en obra cual es antes de pegar la imagen (un piso son 3.96 m de error). Si en terreno se usa otra, se cambia aca.",
+  "cara": "+x",
+  "_cara_por_que": "La cara de la columna donde se pega la imagen: +x, -x, +y o -y en ejes de OpenSees (x hacia el este del modelo, y hacia el norte, z arriba). La normal de esa cara es la que sale de la imagen hacia quien la mira.",
+  "altura_centro_m": 1.4,
+  "_altura_por_que": "Altura del CENTRO de la imagen sobre el nodo inferior de la columna (el nivel del piso en el modelo). 1.40 m queda a la altura de los ojos. SUPUESTO: el nodo esta en la cota -0.05 que el perfil rotula como nivel (cielo piso 1) de una losa de 15 cm, no en el piso terminado, y ningun archivo dice si es su cara superior o su eje; la diferencia (5 a 10 cm) es error de registro vertical, se mide en obra y se dice en la defensa.",
+  "ancho_impreso_m": 0.2,
+  "_ancho_por_que": "Ancho REAL de la imagen impresa, medido con regla. MindAR mide todo en 'anchos de imagen': si esto esta mal, el modelo sale agrandado o achicado en la misma proporcion. El PDF de marcador/ la imprime a 20.0 cm al 100 %.",
+  "radio_sector_m": 6.0,
+  "_radio_por_que": "Se muestran las barras con algun extremo a menos de esta distancia horizontal del eje de la columna y entre el piso de abajo y el de arriba: la columna, las vigas que llegan a ella y sus vecinas.",
+  "modos": {
+   "sitio": {
+    "escala": 1.0,
+    "descripcion": "La imagen pegada en la columna real: el modelo se dibuja a tamano real, encima de la columna."
+   },
+   "maqueta": {
+    "escala": 0.02,
+    "descripcion": "La imagen sobre una mesa (la sala de la defensa): el sector a escala 1:50, anclado en el mismo punto de la columna."
+   }
+  },
+  "modo_por_defecto": "maqueta",
+  "caso_por_defecto": "1.2G+1.0Q+1.4EX"
+ }
+}
