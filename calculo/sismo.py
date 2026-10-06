@@ -211,9 +211,8 @@ def analizar(modelo, caso_carga, res, caso='EX', nombre=''):
     El informe del caso lateral a partir de lo que ya esta en memoria:
     el modelo, el caso de carga que se aplico y el resultado resuelto.
 
-    Existe separado de revisar() para que el laboratorio de la Semana 3
-    pueda revisar un EX/EY que acaba de construir con los parametros del
-    profesor y resolver en memoria, sin pasar por data/resultados/. La
+    Existe separado de revisar() para que el laboratorio pueda revisar
+    un EX/EY que acaba de construir con los parametros del profesor. La
     logica es una sola; lo unico que cambia es de donde vienen los datos.
     """
     campo_f, u_dir, u_otra, idx = direccion_de(caso)
