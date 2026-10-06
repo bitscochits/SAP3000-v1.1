@@ -96,11 +96,11 @@ public static class RecursosRealistas
             cielo.SetFloat("_ImageType", 0f);  // 360 grados
             cielo.SetFloat("_Exposure", 1f);
             // El giro que pone el sol del HDRI donde esta la luz de la vista
-            // realista: lo calcula comun/recursos_realistas.py (sol.json).
+            // realista: lo calcula herramientas/recursos_realistas.py (sol.json).
             string sol = TEXTURAS + "/cielo/sol.json";
             if (File.Exists(sol))
                 cielo.SetFloat("_Rotation", JsonUtility.FromJson<SolDelCielo>(File.ReadAllText(sol)).giro_grados);
-            else Debug.LogWarning("RecursosRealistas: falta " + sol + " (correr comun/recursos_realistas.py)");
+            else Debug.LogWarning("RecursosRealistas: falta " + sol + " (correr 'python sap.py recursos')");
             EditorUtility.SetDirty(cielo);
             hechos++;
         }
@@ -113,7 +113,7 @@ public static class RecursosRealistas
     }
 
     /// El mapa de detalle (URP/Lit, x2) que rompe el patron de lejos: lo
-    /// arma y lo escala comun/recursos_realistas.py (detalle.png y
+    /// arma y lo escala herramientas/recursos_realistas.py (detalle.png y
     /// detalle.json). Gris LINEAL: 0.5 deja el color igual.
     static void PonerDetalle(Material m, string item)
     {

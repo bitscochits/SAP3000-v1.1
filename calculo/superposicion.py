@@ -38,9 +38,12 @@ r"""
 from __future__ import annotations
 
 import copy
+import math
 import sys
+import time
 
 from calculo import edificio as _ed
+from calculo import esfuerzos as es
 from calculo import laboratorio as lab
 from calculo import opensees
 
@@ -281,6 +284,8 @@ def verificar(lambdas, tol=1.0e-9, por_caso=None, modelo=None, margen=1.05):
 
 # ============================================================
 def main(argv):
+    if '--lambdas' in argv:
+        return main_lambdas(argv)
     p = lab.cargar(argv)
 
     modelo = _ed.estructura()
@@ -327,6 +332,284 @@ def main(argv):
     print('  LA SUPERPOSICION COINCIDE CON LA CORRIDA EXPLICITA EN LAS %d '
           'COMBINACIONES' % len(combos))
     print('=' * 72)
+    return 0
+
+
+# ============================================================
+# LA COMBINACION CON LAMBDAS LIBRES (los casos del LABORATORIO)
+# ============================================================
+# Lo de arriba combina los casos DEL MODELO para probar la superposicion
+# contra una corrida explicita. Lo de aca combina los casos DEL
+# LABORATORIO (esfuerzos.base: q de NCh1537, Cs, el patron en altura)
+# para CUALQUIER juego de factores (lambda_G, lambda_Q, lambda_EX,
+# lambda_EY), y arma el mismo bloque que salidas/resultados.json trae por
+# cada caso: desplazamientos de todos los nodos, esfuerzos de todas las
+# barras con sus estaciones y la demanda sobre la curva P-M de cada
+# elemento con fierro. Es lo que devuelve POST /combinar
+# (exportar/servidor.py) y lo que queda precalculado para E1..E3 en el
+# bloque 'superposicion' de salidas/resultados.json.
+#
+# Correr:
+#   python sap.py revisar superposicion --lambdas 1.2 1.0 -1.4 0
+#   python sap.py revisar superposicion --lambdas 0.9 0 -1.4 0 --cs 0.20
+#   (los demas argumentos son flags de los parametros del laboratorio)
+#
+# NO SE REIMPLEMENTA NADA. La base son los cuatro casos del laboratorio
+# resueltos UNA vez con esfuerzos.base (casos, familias P-M, elementos,
+# largos y nucleos, todo calculado ahi). La combinacion es
+# esfuerzos.bloque_caso, la misma funcion que arma los quince casos de
+# los resultados: suma lineal de f, u y w con demanda.combinar,
+# estaciones con esfuerzos_internos y la demanda con demanda.demanda +
+# capacidad_en. Por eso E2 (1.2G+1.6Q, que ya es un caso de los
+# resultados) tiene que salir identico a ese caso, y la verificacion de
+# la superposicion lo exige.
+#
+# POR QUE LA D/C VIENE CALCULADA Y NO SE SUMA EN UNITY. u, f y las
+# estaciones son lineales en lambda; la demanda-capacidad no: el extremo
+# que manda cambia, M de una columna es hypot(My, Mz) y Mn depende de P.
+# Sumar lambda * u_caso daria otro numero. Regla de oro: Python calcula,
+# Unity muestra.
+#
+# AUTOVERIFICACION. bloque_caso devuelve el peor cociente de cierre
+# (esfuerzo(L) contra f_j de OpenSees, sobre la cota de redondeo). Si pasa
+# de 1, el caso NO se entrega: CasoNoCierra, igual que los resultados no
+# se escriben.
+
+# El bloque de entrada/laboratorio.json con E1..E3, los rangos de los
+# sliders y los elementos de control.
+ESTADOS = 'superposicion'
+NOMBRE_LIBRE = 'LIBRE'
+TIPO = 'superposicion'
+
+
+class CasoNoCierra(RuntimeError):
+    """El caso combinado no cierra con OpenSees: no se entrega."""
+
+
+def cargar_estados():
+    """
+    E1..E3, los rangos de los sliders y los elementos de control: el bloque
+    ESTADOS de entrada/laboratorio.json tal cual, con sus '_por_que'. Se
+    lee en cada llamada, asi GET /estados ve un cambio del archivo sin
+    reiniciar el servidor.
+    """
+    return lab.bloque(ESTADOS)
+
+
+def sin_explicacion(valor):
+    """Quita las claves '_...': son para quien lee el JSON, no para Unity
+    (JsonUtility las ignoraria, pero el contrato con el C# las marcaria
+    como claves sin campo)."""
+    if isinstance(valor, dict):
+        return {k: sin_explicacion(v) for k, v in valor.items() if not k.startswith('_')}
+    if isinstance(valor, list):
+        return [sin_explicacion(v) for v in valor]
+    return valor
+
+
+def lambdas_de(pedido):
+    r"""
+    {G, Q, EX, EY} como float desde un dict. Una clave ausente vale 0 (un
+    caso que no entra). Lanza ValueError con el motivo si un factor no es
+    un numero finito: un NaN o un infinito no dan error en la suma, dan
+    un caso lleno de NaN que Unity dibujaria como nada.
+    """
+    if not isinstance(pedido, dict):
+        raise ValueError('los factores tienen que venir en un objeto {G, Q, EX, EY}')
+    salida = {}
+    for c in CASOS:
+        v = pedido.get(c, 0.0)
+        # bool es int en Python: true no es un factor.
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise ValueError('el factor %s tiene que ser un numero, vino %r' % (c, v))
+        v = float(v)
+        if not math.isfinite(v):
+            raise ValueError('el factor %s tiene que ser finito, vino %r' % (c, v))
+        salida[c] = v
+    return salida
+
+
+def texto_combinacion(lambdas):
+    """'1.20 G + 1.00 Q - 1.40 EX'. laboratorio.como_texto escribiria
+    '+ -1.40 EX' con un factor negativo; esto pone el signo."""
+    partes = []
+    for c in CASOS:
+        v = float(lambdas.get(c, 0.0))
+        if abs(v) <= 1e-12:
+            continue
+        if not partes:
+            partes.append('%s%.2f %s' % ('-' if v < 0 else '', abs(v), c))
+        else:
+            partes.append('%s %.2f %s' % ('-' if v < 0 else '+', abs(v), c))
+    return ' '.join(partes) if partes else '(nula)'
+
+
+def parametros_de(b):
+    """
+    Las lineas de laboratorio.describir() con que se armo la base, como las
+    lleva info.parametros de los resultados. Son la HUELLA con que Unity
+    reconoce que un caso combinado es de los mismos parametros que su
+    resultados.json.
+    """
+    return [l.strip() for l in lab.describir(b['p']).split('\n')]
+
+
+def base(argv=(), silenciar=True):
+    r"""
+    La base del laboratorio (esfuerzos.base) y cuanto tardo: todo lo que
+    hace falta para combinar sin volver a OpenSees. No calcula nada mas
+    que esfuerzos.base; agrega 'segundos' y 'avisos_opensees'.
+
+    Toca OpenSees (resolver y las curvas P-M): quien la llame desde un
+    servidor tiene que tomar opensees.LOCK y pasar silenciar=False (ver
+    exportar/servidor.obtener_base).
+    """
+    argv = list(argv or ())
+    t0 = time.time()
+    avisos = opensees.AvisosDeOpenSees() if silenciar else None
+    if avisos is not None:
+        with avisos:
+            b = es.base(argv)
+    else:
+        b = es.base(argv)
+    b = dict(b)
+    b['segundos'] = time.time() - t0
+    b['avisos_opensees'] = avisos.resumen() if avisos is not None else None
+    return b
+
+
+# ============================================================
+# UN CASO COMBINADO
+# ============================================================
+def caso_combinado(b, lambdas, nombre=NOMBRE_LIBRE, tipo=TIPO, descripcion=None):
+    r"""
+    Un caso completo para esos factores, con la forma de los casos de
+    resultados.json: nombre, tipo, descripcion, factores [G, Q, EX, EY],
+    max_desplazamiento_mm, desplazamientos de todos los nodos, esfuerzos
+    de todas las barras con estaciones y demandas de las barras con fierro.
+    `b` es la base del laboratorio (esfuerzos.base o base()).
+
+    Devuelve (caso, peor_cierre) con peor_cierre = (cociente, id, comp).
+    """
+    lambdas = lambdas_de(lambdas)
+    caso, _cargas, peor = es.bloque_caso(
+        nombre, tipo, descripcion if descripcion is not None else texto_combinacion(lambdas),
+        lambdas, b['resultados'], b['elementos'], b['cargas_base'],
+        b['familia_de'], b['curvas'], b['largos'], b.get('nucleo_de'))
+
+    if not caso['desplazamientos']:
+        # Con todos los lambda en cero bloque_caso no recorre ningun caso
+        # y deja la lista vacia. La combinacion nula es u = 0 en todos los
+        # nodos (K u = 0), y Unity espera la lista COMPLETA: un nodo que
+        # falta se dibuja sin mover, pero un visor que cuenta nodos no
+        # sabria que es a proposito.
+        caso['desplazamientos'] = [
+            {'id': i, 'ux': 0.0, 'uy': 0.0, 'uz': 0.0, 'rx': 0.0, 'ry': 0.0, 'rz': 0.0}
+            for i in sorted(int(n['id']) for n in b['modelo']['nodos'])]
+
+    if peor[0] > 1.0:
+        raise CasoNoCierra(
+            '%s (%s) no cierra con OpenSees: elemento %d, %s, error %.3f veces la cota '
+            'de redondeo. No se entrega.' % (nombre, texto_combinacion(lambdas),
+                                              peor[1], peor[2], peor[0]))
+    return caso, peor
+
+
+def equilibrio_combinado(b, lambdas):
+    r"""
+    opensees.equilibrio de la combinacion: la carga combinada
+    (combinar_cargas) contra las reacciones combinadas
+    (combinar_resultados). Es la UNICA suma de reacciones valida (CLAUDE.md,
+    "Reacciones"): en un nodo de diafragma nodeReaction trae la fuerza
+    interna de la restriccion, y sumar todas las filas dobla el corte.
+    Viaja calculado para que Unity no sume nada.
+    """
+    lambdas = lambdas_de(lambdas)
+    carga = combinar_cargas(b['datos'], lambdas, NOMBRE_LIBRE)
+    reacciones = combinar_resultados(b['resultados'], lambdas)
+    return opensees.equilibrio(b['datos'], carga, reacciones)
+
+
+def respuesta_combinar(b, lambdas):
+    """El cuerpo de POST /combinar con ok = true (CONTRATO.md, servidor)."""
+    caso, _peor = caso_combinado(b, lambdas)
+    return {
+        'ok': True,
+        'error': '',
+        'edificio': _ed.NOMBRE,
+        'parametros': parametros_de(b),
+        'caso': caso,
+        # Agregado a lo del contrato (no cambia nada de lo que ya estaba):
+        # el equilibrio de la combinacion con la regla de opensees.equilibrio.
+        'equilibrio': equilibrio_combinado(b, lambdas),
+    }
+
+
+def respuesta_estados(estados=None):
+    """El cuerpo de GET /estados: los estados sin caso y los rangos."""
+    estados = estados or cargar_estados()
+    return {
+        'ok': True,
+        'error': '',
+        'estados': [sin_explicacion({k: e[k] for k in ('nombre', 'descripcion', 'lambdas')})
+                    for e in estados['estados']],
+        'rangos': sin_explicacion(estados['rangos']),
+    }
+
+
+# ============================================================
+# POR CONSOLA
+# ============================================================
+def imprimir_caso(caso, peor, eq):
+    """El maximo, el NO PASA, los fuera de curva, el cierre, el equilibrio
+    y los elementos que no pasan de un caso combinado."""
+    dem = caso['demandas']
+    no_pasan = sum(1 for d in dem if not d['pasa'])
+    fuera = sum(1 for d in dem if d['u'] >= 9999.0)
+    print('  %-6s %-24s max %8.4f mm   NO PASA %d/%d (%d fuera de curva)   cierre %.3f'
+          % (caso['nombre'], caso['descripcion'], caso['max_desplazamiento_mm'], no_pasan,
+             len(dem), fuera, peor[0]))
+    print('         equilibrio: aplicada [%s] kN, reaccion [%s] kN, error [%s]'
+          % (', '.join('%.4f' % v for v in eq['aplicada_kN']),
+             ', '.join('%.4f' % v for v in eq['reaccion_kN']),
+             ', '.join('%.1e' % v for v in eq['error_kN'])))
+    for d in dem:
+        if not d['pasa']:
+            print('         elemento %4d  P %10.4f  M %10.4f  Mn %10.4f  u %s'
+                  % (d['id'], d['P'], d['M'], d['Mn'],
+                     'fuera de curva' if d['u'] >= 9999.0 else '%.6f' % d['u']))
+
+
+def main_lambdas(argv):
+    """sap.py revisar superposicion --lambdas G Q EX EY [flags de los parametros]"""
+    argv = list(argv)
+    i = argv.index('--lambdas')
+    try:
+        valores = [float(x) for x in argv[i + 1:i + 5]]
+    except ValueError:
+        raise SystemExit('--lambdas necesita cuatro numeros: G Q EX EY')
+    if len(valores) != 4:
+        raise SystemExit('--lambdas necesita cuatro numeros: G Q EX EY')
+    pedidos = dict(zip(CASOS, valores))
+    argv = argv[:i] + argv[i + 5:]
+
+    print('=' * 72)
+    print('  SUPERPOSICION CON LAMBDAS LIBRES   %s' % _ed.NOMBRE.upper())
+    print('=' * 72)
+    b = base(argv)
+    print('  base: esfuerzos.base en %.1f s (%d nodos, %d elementos, %d con fierro)'
+          % (b['segundos'], len(b['modelo']['nodos']), len(b['largos']),
+             sum(1 for f in b['familia_de'].values() if f >= 0)))
+    if b['avisos_opensees']:
+        print('  %s' % b['avisos_opensees'])
+    for linea in parametros_de(b):
+        print('  %s' % linea)
+    print()
+
+    t = time.time()
+    caso, peor = caso_combinado(b, pedidos, nombre=NOMBRE_LIBRE)
+    imprimir_caso(caso, peor, equilibrio_combinado(b, pedidos))
+    print('  (combinado en %.3f s, sin volver a OpenSees)' % (time.time() - t))
     return 0
 
 

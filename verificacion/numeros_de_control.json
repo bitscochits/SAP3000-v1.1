@@ -1,0 +1,124 @@
+{
+ "_que_es": [
+  "LOS NUMEROS QUE NO PUEDEN CAMBIAR SIN UNA DECISION.",
+  "",
+  "Cada uno lo MIDE una entrada de la suite (python sap.py verificar) y la tabla QA",
+  "(python sap.py revisar qa) los lee de aca; los documentos los citan de aca. Si un",
+  "cambio al edificio o al laboratorio los mueve, no se corrige el numero para que pase:",
+  "se decide si el cambio es correcto y, si lo es, se cambia el numero aca, con el",
+  "commit que lo explica.",
+  "",
+  "Medidos el 06-10-2026 sobre el edificio (los dos cuerpos, 558 nodos y 937 elementos)",
+  "y comparados con los de v1.0, que dan lo mismo."
+ ],
+ "_como_se_lee": [
+  "Los enteros son conteos y tags: se exigen exactos.",
+  "Los decimales van ESCRITOS COMO TEXTO, con los digitos con que se comparan: '16.8000'",
+  "se exige a medio ultimo digito (5e-5). Como numero, 16.8 y 16.8000 serian lo mismo y no",
+  "se sabria a cuantos decimales exigirlo; asi los documentos los citan tal cual.",
+  "En Python: verificacion.suite.control('edificio', 'G_kN') -> (97885.3604, 5e-05) y",
+  "verificacion.suite.calza(medido, 'edificio', 'G_kN')."
+ ],
+ "edificio": {
+  "_de_donde": "E1 (dato) y E2 (junta); los casos del modelo: M2 y L3. Los casos del MODELO (los de entrada/edificio.json, los que resuelve /analizar) no son los del laboratorio: solo G coincide.",
+  "nodos": 558,
+  "elementos": 937,
+  "secciones": 47,
+  "diafragmas": 10,
+  "casos_del_modelo": 4,
+  "secciones_de_hormigon": 44,
+  "nodos_por_cuerpo": {"ingenieria": 326, "lt2": 232},
+  "elementos_por_cuerpo": {"ingenieria": 559, "lt2": 378},
+  "G_kN": "97885.3604",
+  "G_por_cuerpo_kN": {"ingenieria": "63736.3812", "lt2": "34148.9792"},
+  "Q_del_modelo_kN": "20002.3025",
+  "EX_del_modelo_kN": "9939.7852",
+  "EY_del_modelo_kN": "9939.7852",
+  "V_del_modelo_por_cuerpo_kN": {"ingenieria": "6306.7222", "lt2": "3633.0630"},
+  "mayor_componente_mm": {"G": "7.5874", "Q": "2.9052", "EX": "16.4151", "EY": "16.8000"},
+  "junta_m": "0.050"
+ },
+ "terreno": {
+  "_de_donde": "U1 (cada apoyo no auxiliar sobre su nivel) y E1 (el terreno declarado es el dibujado)",
+  "base": {"z": "-7.97", "apoyos": 45},
+  "terraza": {"z": "-4.01", "apoyos": 39}
+ },
+ "tributarias": {
+  "_de_donde": "E3",
+  "elementos_con_losa": 544,
+  "area_m2": "6836.54"
+ },
+ "derivas": {
+  "_de_donde": "E4: la mayor deriva de entrepiso de NCh433 5.9.2 en los maestros de cada cuerpo bajo el EX y el EY del modelo (1/n, y la cota del piso donde ocurre). Son las mismas que daba v1.0: las del LT2 con su verificacion del modelo del cuerpo, las del cuerpo antiguo con el mismo calculo sobre los resultados de v1.0.",
+  "lt2": {"EX": 1011, "cota_EX": "3.91", "EY": 1659, "cota_EY": "3.91"},
+  "ingenieria": {"EX": 2189, "cota_EX": "7.87", "EY": 895, "cota_EY": "7.87"}
+ },
+ "laboratorio": {
+  "_de_donde": "L2 (Partes A, B y C) y R1 (resultados al dia). Los casos del LABORATORIO: q de NCh1537 y Cs de entrada/laboratorio.json.",
+  "area_tributaria_m2": "6836.5444",
+  "Q_kN": "20509.6333",
+  "V_kN": "10814.0177",
+  "casos": 15,
+  "escala_deformada": 160,
+  "columna_demo": 200005,
+  "muro_demo": 100537,
+  "elementos_con_fierro": 207,
+  "no_pasa": {"S3": 7, "0.9G-1.4EX": 13},
+  "peor_cierre": "0.9999999995",
+  "_peor_cierre": "el peor cociente del diagrama reconstruido contra f_j de OpenSees, sobre su cota (Q, elemento 100277, Vz): esta al filo de 1 a proposito, y cualquier cambio en el orden de las sumas lo pasa"
+ },
+ "superposicion": {
+  "_de_donde": "R4 (E1..E3 por cuatro vias) y la tabla QA",
+  "de": 207,
+  "E1": {"max_mm": "9.6336", "no_pasa": 0},
+  "E2": {"max_mm": "12.3288", "no_pasa": 0},
+  "E3": {"max_mm": "25.0876", "no_pasa": 9, "fuera_de_curva": 3}
+ },
+ "capacidad_200037": {
+  "_de_donde": "C1: la columna lt2:P 0.70x0.70 del marcador de la AR, 20 barras D25 supuestas, f'c 35 MPa",
+  "Mn_P0_kNm": "1190.2",
+  "nariz_P_kN": "4186",
+  "nariz_M_kNm": "1762"
+ },
+ "demanda": {
+  "_de_donde": "C3: calculo.demanda --todas con G + Q",
+  "familias": 54,
+  "elementos_con_fierro": 207,
+  "mas_exigida_G_mas_Q": 100080,
+  "u_mas_exigida_G_mas_Q": "0.557"
+ },
+ "nucleos": {
+  "_de_donde": "C4",
+  "patas": 50,
+  "grupos": 15,
+  "filas_de_pata": 735
+ },
+ "benchmark": {
+  "_de_donde": "M1: el marco de prueba de 4 columnas y 4 vigas, validado contra SAP2000",
+  "UZ_techo_mm": "-0.06348"
+ },
+ "carga_movil": {
+  "_de_donde": "P1",
+  "posiciones": 30,
+  "escala": 1600,
+  "max_mm": "0.9635"
+ },
+ "persona": {
+  "_de_donde": "P2 y K2: 100 kN a media viga 200141",
+  "casos": 1098,
+  "escala": 540,
+  "viga_200141": {"uz_carga_mm": "-0.715", "M_carga_kNm": "-123.53"}
+ },
+ "m1": {
+  "_de_donde": "M4: borrar la columna 200069 y mirar el nodo 200186 bajo G",
+  "nodo": 200186,
+  "uz_G_antes_mm": "-3.64515",
+  "uz_G_despues_mm": "-21.59875"
+ },
+ "ar": {
+  "_de_donde": "A1",
+  "elementos": 21,
+  "nodos": 22,
+  "numeros": 23024
+ }
+}

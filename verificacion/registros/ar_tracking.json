@@ -1,0 +1,95 @@
+{
+ "_que_es": "Lo que midio python -m verificacion.ar registro_y_tracking: [3b] la transformacion de ar.js contra la de Python y [4] el tracking con un video sintetico de pose conocida. Lo lee el bloque precision. No se regenera con sap.py preparar: se vuelve a medir corriendo ese bloque (necesita Chrome o Edge).",
+ "_digitos": "distancia_m, error_mm, ancho_px, ejes_deg... van con los digitos con que [4] los informa (los que usa el presupuesto de precision); sin_redondear trae los de la corrida.",
+ "medido": "2026-10-06T19:28:22",
+ "navegador": "chrome.exe",
+ "fov_mindar_grados": 45.0,
+ "video_px": [
+  640,
+  480
+ ],
+ "marcador_png_md5": "47af7ac5ffca4ec4d2bc71f223686534",
+ "targets_mind_md5": "120157cdf6c641a29c4a4243a5b21dbf",
+ "transformacion": {
+  "sitio": {
+   "peor_anchos": 2.842170943040401e-14,
+   "en": "nodo 200059",
+   "cota_anchos": 1.7053025658242404e-11
+  },
+  "maqueta": {
+   "peor_anchos": 5.551115123125783e-16,
+   "en": "nodo 200059",
+   "cota_anchos": 1.7053025658242404e-11
+  }
+ },
+ "poses": [
+  {
+   "verdad_m": 0.45,
+   "inclinacion_deg": 0.0,
+   "giro_deg": 0.0,
+   "poses_publicadas": 10,
+   "detecta": true,
+   "distancia_m": 0.451,
+   "error_mm": 1.1,
+   "cota_mm": 5.2,
+   "ancho_px": 258,
+   "inclinacion_estimada_deg": 1.1,
+   "ejes_deg": 1.1,
+   "cota_deg": 2.7,
+   "sin_redondear": {
+    "distancia_m": 0.451148071863601,
+    "error_mm": 1.1480718636009968,
+    "ancho_px": 257.51611331979683,
+    "inclinacion_estimada_deg": 1.0926739449059741,
+    "ejes_deg": 1.0926739449057516
+   },
+   "ok": true
+  },
+  {
+   "verdad_m": 0.55,
+   "inclinacion_deg": 30.0,
+   "giro_deg": 0.0,
+   "poses_publicadas": 10,
+   "detecta": true,
+   "distancia_m": 0.551,
+   "error_mm": 0.6,
+   "cota_mm": 7.8,
+   "ancho_px": 211,
+   "inclinacion_estimada_deg": 29.8,
+   "ejes_deg": 0.7,
+   "cota_deg": 3.3,
+   "sin_redondear": {
+    "distancia_m": 0.550648455034333,
+    "error_mm": 0.6484550343329731,
+    "ancho_px": 210.69500180710648,
+    "inclinacion_estimada_deg": 29.814568494327204,
+    "ejes_deg": 0.6506975571667145
+   },
+   "ok": true
+  },
+  {
+   "verdad_m": 0.6,
+   "inclinacion_deg": 40.0,
+   "giro_deg": 20.0,
+   "poses_publicadas": 13,
+   "detecta": true,
+   "distancia_m": 0.597,
+   "error_mm": 2.6,
+   "cota_mm": 9.3,
+   "ancho_px": 193,
+   "inclinacion_estimada_deg": 40.6,
+   "ejes_deg": 0.9,
+   "cota_deg": 3.6,
+   "sin_redondear": {
+    "distancia_m": 0.5973581983833024,
+    "error_mm": 2.641801616697581,
+    "ancho_px": 193.13708498984764,
+    "inclinacion_estimada_deg": 40.56112540400333,
+    "ejes_deg": 0.8888147062712323
+   },
+   "ok": true
+  }
+ ],
+ "completa": true,
+ "ok": true
+}

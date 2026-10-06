@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 124959203}
   - component: {fileID: 124959202}
   m_Layer: 0
-  m_Name: VisorSemana03
+  m_Name: CargasYArmadura
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f28c28f7385c8343b085d91b3709f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisorSemana03
-  nombreArchivo: semana03.json
   mostrarCargas: 1
   mostrarArmadura: 1
   enfierrarTodas: 0
@@ -217,8 +216,6 @@ MonoBehaviour:
   timeoutSegundos: 30
   visor: {fileID: 258344397}
   casoActivo: G
-  mandarTodosLosCasos: 1
-  analizarAlIniciar: 0
 --- !u!4 &212550391
 Transform:
   m_ObjectHideFlags: 0
@@ -249,9 +246,6 @@ MonoBehaviour:
   visor: {fileID: 258344397}
   analizador: {fileID: 212550390}
   camara: {fileID: 330585548}
-  colorSeleccion: {r: 1, g: 0.85, b: 0.15, a: 1}
-  colorResaltado: {r: 0.15, g: 0.85, b: 1, a: 1}
-  anchoPanel: 310
   pasoRejilla: 0.25
 --- !u!1 &258344396
 GameObject:
@@ -284,7 +278,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94bfc5a2fedc7c749aa1cdf4699fbb05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisorEstructura
-  nombreArchivo: modelo_unity_edificio.json
   radioNodo: 0.15
   radioNodoAuxiliar: 0.05
   grosorBarra: 0.05
@@ -296,8 +289,6 @@ MonoBehaviour:
   colorApoyo: {r: 0.18, g: 0.6, b: 0.37, a: 1}
   colorNodoAuxiliar: {r: 0.55, g: 0.58, b: 0.62, a: 1}
   colorDeformada: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  apoyosComoCubos: 1
-  ladoCuboApoyo: 0.45
   fantasmaFueraDelPiso: 1
   colorFantasma: {r: 0.62, g: 0.64, b: 0.68, a: 1}
   colorPosicionOriginal: {r: 0.16, g: 0.2, b: 0.27, a: 1}
@@ -377,11 +368,9 @@ MonoBehaviour:
   colorCurvaMax: {r: 0.65, g: 0.75, b: 0.95, a: 1}
   colorDemanda: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorDemandaActiva: {r: 0.9, g: 0.1, b: 0.1, a: 1}
-  archivoSuperposicion: superposicion.json
-  urlServidorS5: http://localhost:5000
+  urlServidor: http://localhost:5000
   timeoutCombinar: 90
   combinarAlMover: 1
-  nombreArchivo: semana04.json
   casoActivo: 
   mostrarDiagramas: 1
   magnitud: My

@@ -2,9 +2,16 @@
 ================================================================
   ConfigurarEscena.cs   (Editor)
 ================================================================
-  Arma la escena del laboratorio: deja el Visor, las capas de QA,
-  Semana 3, Semana 4, el analizador y la camara orbital conectados
-  entre si, y limpia los componentes cuyo script ya no existe.
+  Arma la escena del laboratorio y deja sus piezas conectadas entre si:
+
+    Visor            VisorEstructura + PanelVisor + VisorResultados
+    Analizador       ClienteReanalisis + EditorEstructura
+    CargasYArmadura  VisorCargasYArmadura
+    Main Camera      CamaraOrbital
+
+  y limpia los componentes cuyo script ya no existe. AmbienteVisor,
+  VisorCargaMovil, VisorPersona y Capturas no van en la escena: se crean
+  solos al cargarla (RuntimeInitializeOnLoadMethod).
 
   Existe para que el montaje de la escena sea REPRODUCIBLE. Si la
   escena se pierde o alguien la deja a medias, se rehace con un
@@ -17,12 +24,17 @@
       Unity.exe -batchmode -quit -projectPath <ruta> \
                 -executeMethod ConfigurarEscena.Configurar
 
-  Es idempotente: correrlo dos veces no duplica nada.
+  Es idempotente: correrlo dos veces no duplica nada, y la segunda vez
+  no guarda (no hay nada que cambiar), asi que SampleScene.unity queda
+  byte a byte igual. Solo guarda si agrego, renombro, conecto o quito
+  algo; al guardar, Unity descarta los campos que la escena tenia
+  guardados y que ya no existen en el C# (nombreArchivo,
+  archivoSuperposicion, colorSeleccion y anchoPanel del editor,
+  analizarAlIniciar...).
 
-  OJO: ConstruirApp lo llama antes de cada build, y termina con
-  SaveScene. En el editor, si la escena abierta tiene cambios sin
-  guardar, primero se pregunta (OpenScene la recargaria del disco y
-  los perderia sin avisar).
+  OJO: ConstruirApp lo llama antes de cada build. En el editor, si la
+  escena abierta tiene cambios sin guardar, primero se pregunta
+  (OpenScene la recargaria del disco y los perderia sin avisar).
 ================================================================
 */
 
@@ -35,6 +47,10 @@ using UnityEngine.SceneManagement;
 public static class ConfigurarEscena
 {
     const string RUTA_ESCENA = "Assets/Scenes/SampleScene.unity";
+
+    // El objeto de las cargas y la armadura. Antes se llamaba como su
+    // script de entonces; se renombra al configurar.
+    const string OBJETO_CARGAS = "CargasYArmadura";
 
     [MenuItem("Laboratorio/Configurar escena")]
     public static void Configurar()
@@ -52,69 +68,73 @@ public static class ConfigurarEscena
 
         var escena = EditorSceneManager.OpenScene(RUTA_ESCENA,
                                                   OpenSceneMode.Single);
+        var cambios = new List<string>();
 
         // --- Scripts perdidos ---
-        // Va antes de buscar los objetos. La escena traia un GameObject
-        // 'Editor' con un script cuyo guid no existe en ningun .meta: un
-        // resto de cuando EditorEstructura vivia ahi (hoy esta en
-        // 'Analizador'). No hacia nada, pero Unity avisaba "The referenced
-        // script ... is missing" en cada Play y en cada build, justo en la
-        // Console donde se buscan los errores de verdad.
+        // Va antes de buscar los objetos: un componente cuyo script no
+        // existe no hace nada, pero Unity avisa "The referenced script ...
+        // is missing" en cada Play y en cada build, justo en la Console
+        // donde se buscan los errores de verdad.
         int perdidos = QuitarScriptsPerdidos(escena);
+        if (perdidos > 0) cambios.Add(perdidos + " script(s) perdido(s) quitado(s)");
 
         // --- Visor ---
         GameObject goVisor = GameObject.Find("Visor");
         if (goVisor == null)
         {
             goVisor = new GameObject("Visor");
-            Debug.Log("Se creo el GameObject 'Visor'.");
+            cambios.Add("se creo el GameObject 'Visor'");
         }
-
-        VisorEstructura visor = Obtener<VisorEstructura>(goVisor);
-        VisorQA qa = Obtener<VisorQA>(goVisor);
-        // Semana 4: esfuerzos, diagramas, P-M y trazabilidad. VisorQA lo
+        VisorEstructura visor = Obtener<VisorEstructura>(goVisor, cambios);
+        PanelVisor qa = Obtener<PanelVisor>(goVisor, cambios);
+        // Resultados: esfuerzos, diagramas, P-M y trazabilidad. PanelVisor lo
         // agrega solo si falta, pero asi queda guardado en la escena.
-        VisorSemana04 s4 = Obtener<VisorSemana04>(goVisor);
+        Obtener<VisorResultados>(goVisor, cambios);
 
-        // --- Semana 3: cargas, sismo y armadura ---
-        // Vive en su propio GameObject, como en la escena versionada.
-        // VisorQA NO lo agrega si falta (solo muestra "no hay VisorSemana03
-        // en la escena"), asi que sin esta linea una escena rehecha con el
-        // menu perdia las flechas de carga, la deformada sismica y la
-        // enfierradura sin ningun error.
-        // Se busca el componente en TODA la escena (tambien inactivo) antes
-        // de mirar el nombre del objeto: VisorQA y CapturaSemana04 lo
-        // toman con FindAnyObjectByType, asi que si alguien lo movio a otro
-        // objeto, crear un segundo dejaria a cada uno leyendo uno distinto.
-        VisorSemana03 s3 = Object.FindAnyObjectByType<VisorSemana03>(
+        // --- Cargas y armadura ---
+        // Vive en su propio GameObject. Se busca el componente en TODA la
+        // escena (tambien inactivo) antes de mirar el nombre del objeto:
+        // PanelVisor y Capturas lo toman con FindAnyObjectByType, asi que si
+        // alguien lo movio a otro objeto, crear un segundo dejaria a cada uno
+        // leyendo uno distinto. Sus valores por defecto son los que la escena
+        // guarda (enfierrarTodas y jaulaDetalle apagados): creado de cero se
+        // ve igual.
+        VisorCargasYArmadura s3 = Object.FindAnyObjectByType<VisorCargasYArmadura>(
             FindObjectsInactive.Include);
-        bool s3Nuevo = s3 == null;
-        if (s3Nuevo)
+        if (s3 == null)
         {
-            GameObject goS3 = GameObject.Find("VisorSemana03");
+            GameObject goS3 = GameObject.Find(OBJETO_CARGAS);
             if (goS3 == null)
             {
-                goS3 = new GameObject("VisorSemana03");
-                Debug.Log("Se creo el GameObject 'VisorSemana03'.");
+                goS3 = new GameObject(OBJETO_CARGAS);
+                cambios.Add("se creo el GameObject '" + OBJETO_CARGAS + "'");
             }
-            s3 = Obtener<VisorSemana03>(goS3);
-            // Los dos que en la escena se apagaron a proposito. Con
-            // enfierrarTodas la jaula de UNA columna se copia en todas y
-            // las deja negras; jaulaDetalle pone una columna gigante al
-            // costado. Solo al crearlo: si el componente ya estaba, manda
-            // lo que se eligio en el Inspector.
-            s3.enfierrarTodas = false;
-            s3.jaulaDetalle = false;
+            s3 = Obtener<VisorCargasYArmadura>(goS3, cambios);
+        }
+        else if (s3.gameObject.name != OBJETO_CARGAS
+                 && s3.gameObject.GetComponents<Component>().Length == 2)
+        {
+            // Un objeto DEDICADO (su Transform y este componente) con otro
+            // nombre: el de antes. Si comparte objeto con otros componentes,
+            // ese nombre es del otro y no se toca.
+            string antes = s3.gameObject.name;
+            s3.gameObject.name = OBJETO_CARGAS;
+            cambios.Add("'" + antes + "' renombrado a '" + OBJETO_CARGAS + "'");
         }
 
         // --- Analizador + Editor (modificar el modelo en vivo) ---
-        // Necesitan el servidor Flask corriendo:
-        //     python semana05/servidor_s5.py
-        // Sin el, el visor funciona igual: solo no se puede reanalizar.
+        // El reanalisis necesita el servidor corriendo (python sap.py
+        // servidor). Sin el, el visor funciona igual: solo no se puede
+        // reanalizar. Al iniciar NO se consulta al servidor: el reanalisis
+        // se pide a mano desde la pestana Modificar.
         GameObject goAnalizador = GameObject.Find("Analizador");
-        if (goAnalizador == null) goAnalizador = new GameObject("Analizador");
-        AnalizadorEstructural analizador = Obtener<AnalizadorEstructural>(goAnalizador);
-        EditorEstructura editor = Obtener<EditorEstructura>(goAnalizador);
+        if (goAnalizador == null)
+        {
+            goAnalizador = new GameObject("Analizador");
+            cambios.Add("se creo el GameObject 'Analizador'");
+        }
+        ClienteReanalisis analizador = Obtener<ClienteReanalisis>(goAnalizador, cambios);
+        EditorEstructura editor = Obtener<EditorEstructura>(goAnalizador, cambios);
 
         // --- Camara ---
         Camera cam = Camera.main;
@@ -123,41 +143,40 @@ public static class ConfigurarEscena
             GameObject goCam = new GameObject("Main Camera");
             goCam.tag = "MainCamera";
             cam = goCam.AddComponent<Camera>();
-            Debug.Log("Se creo la Main Camera.");
+            cambios.Add("se creo la Main Camera");
         }
-
-        CamaraOrbital orbital = Obtener<CamaraOrbital>(cam.gameObject);
+        CamaraOrbital orbital = Obtener<CamaraOrbital>(cam.gameObject, cambios);
 
         // --- Cableado ---
         // Se hace por codigo y no arrastrando en el Inspector para que
-        // quede registrado que apunta a que.
-        qa.visor = visor;
-        qa.camara = cam;
-        qa.orbital = orbital;
-        orbital.visor = visor;
+        // quede registrado que apunta a que. Solo se asigna (y se cuenta
+        // como cambio) lo que no apunta ya a donde corresponde.
+        if (qa.visor != visor) { qa.visor = visor; Marcar(qa, cambios, "PanelVisor.visor"); }
+        if (qa.camara != cam) { qa.camara = cam; Marcar(qa, cambios, "PanelVisor.camara"); }
+        if (qa.orbital != orbital) { qa.orbital = orbital; Marcar(qa, cambios, "PanelVisor.orbital"); }
+        if (orbital.visor != visor) { orbital.visor = visor; Marcar(orbital, cambios, "CamaraOrbital.visor"); }
+        if (analizador.visor != visor) { analizador.visor = visor; Marcar(analizador, cambios, "ClienteReanalisis.visor"); }
+        if (editor.visor != visor) { editor.visor = visor; Marcar(editor, cambios, "EditorEstructura.visor"); }
+        if (editor.analizador != analizador) { editor.analizador = analizador; Marcar(editor, cambios, "EditorEstructura.analizador"); }
+        if (editor.camara != orbital) { editor.camara = orbital; Marcar(editor, cambios, "EditorEstructura.camara"); }
 
-        analizador.visor = visor;
-        // Al iniciar NO se consulta al servidor: la app tiene que abrir
-        // igual aunque el servidor no este corriendo. El reanalisis se
-        // dispara a mano desde el panel del editor.
-        analizador.analizarAlIniciar = false;
-
-        editor.visor = visor;
-        editor.analizador = analizador;
-        editor.camara = orbital;
-
-        EditorUtility.SetDirty(qa);
-        EditorUtility.SetDirty(s4);
+        if (cambios.Count == 0)
+        {
+            Debug.Log("Escena configurada: ya estaba armada (Visor + PanelVisor + VisorResultados, "
+                      + "CargasYArmadura, Analizador, CamaraOrbital). No se guardo nada.");
+            return;
+        }
         EditorUtility.SetDirty(s3);
-        EditorUtility.SetDirty(orbital);
-        EditorUtility.SetDirty(analizador);
-        EditorUtility.SetDirty(editor);
         EditorSceneManager.MarkSceneDirty(escena);
         EditorSceneManager.SaveScene(escena);
+        Debug.Log("Escena configurada y guardada (" + cambios.Count + " cambio(s)): "
+                  + string.Join("; ", cambios.ToArray()));
+    }
 
-        Debug.Log("Escena configurada: Visor + VisorQA + VisorSemana04 + "
-                  + "VisorSemana03 + Analizador + CamaraOrbital conectados y "
-                  + $"guardados ({perdidos} script(s) perdido(s) quitado(s)).");
+    static void Marcar(Object o, List<string> cambios, string que)
+    {
+        EditorUtility.SetDirty(o);
+        cambios.Add(que + " conectado");
     }
 
     /// Quita los componentes cuyo script ya no existe, en todos los
@@ -201,13 +220,13 @@ public static class ConfigurarEscena
 
     /// Devuelve el componente, agregandolo solo si falta. Asi la
     /// funcion se puede correr las veces que sea sin duplicar.
-    static T Obtener<T>(GameObject go) where T : Component
+    static T Obtener<T>(GameObject go, List<string> cambios) where T : Component
     {
         T c = go.GetComponent<T>();
         if (c == null)
         {
             c = go.AddComponent<T>();
-            Debug.Log($"Se agrego {typeof(T).Name} a '{go.name}'.");
+            cambios.Add($"se agrego {typeof(T).Name} a '{go.name}'");
         }
         return c;
     }

@@ -9,12 +9,12 @@
     ConstruirWeb()       Web       build/web/index.html
     ConstruirAndroid()   Android   build/android/LaboratorioEstructural.apk
 
-  Uso desde la terminal (lo hace comun/lanzar_unity.py, con Unity
+  Uso desde la terminal (lo hace herramientas/lanzador.py, con Unity
   CERRADO; un batch con el editor abierto sale con error):
 
-      python comun/lanzar_unity.py build --forzar     (Windows)
-      python comun/lanzar_unity.py web                (Web)
-      python comun/lanzar_unity.py android            (Android)
+      python sap.py unity build --forzar     (Windows)
+      python sap.py unity web                (Web)
+      python sap.py unity android            (Android)
 
   que corren, por ejemplo:
 
@@ -26,7 +26,7 @@
   IMPORTANTE: los JSON van en StreamingAssets, que Unity copia TAL
   CUAL dentro de la build. Por eso la app lee el mismo archivo que
   genero Python y no una copia embebida: si se regenera el modelo,
-  basta con volver a copiarlo ('lanzar_unity.py sincronizar <ed>') y
+  basta con volver a copiarlo ('python sap.py sincronizar') y
   la app de Windows o la Web ya lo muestran, sin recompilar. En
   Android StreamingAssets queda DENTRO del .apk: ahi si hay que
   recompilar.
@@ -74,8 +74,8 @@ public static class ConstruirApp
     // LOS TRES DESTINOS
     // ============================================================
 
-    /// Windows. El nombre NO cambia: lanzar_unity.py llama
-    /// 'ConstruirApp.Construir' desde antes de que hubiera otros.
+    /// Windows. El nombre NO cambia: herramientas/lanzador.py llama
+    /// 'ConstruirApp.Construir' (DESTINOS) desde antes de que hubiera otros.
     [MenuItem("Laboratorio/Construir app standalone")]
     public static void Construir()
     {
@@ -172,7 +172,7 @@ public static class ConstruirApp
             + $"Para instalarlo (baja varios GB y pide permisos): Unity Hub > Installs > "
             + $"{VERSION_EDITOR} > Add modules > {modulo}. Despues cerrar y volver a abrir Unity.";
 
-        // 'BUILD FALLO' es la clave que busca lanzar_unity._errores_del_log.
+        // 'BUILD FALLO' es la clave que busca herramientas/lanzador.py (errores_del_log).
         Debug.LogError("BUILD FALLO: falta un modulo. " + mensaje);
         if (Application.isBatchMode)
             EditorApplication.Exit(1);
@@ -222,28 +222,23 @@ public static class ConstruirApp
             Debug.LogError($"BUILD FALLO: {destino} {r.result}, "
                            + $"{r.totalErrors} errores");
             // En batchmode hay que forzar el codigo de salida, si no
-            // Unity termina con 0 y el notebook cree que salio bien.
+            // Unity termina con 0 y el lanzador cree que salio bien.
             if (Application.isBatchMode)
                 EditorApplication.Exit(1);
         }
     }
 
-    /// La raiz del repositorio, buscada SUBIENDO hasta su marca, con la
-    /// misma regla que comun/rutas.py (MARCAS = '.git', 'setup.ps1'):
-    /// contar carpetas hacia arriba apunta a otro lado sin fallar si el
-    /// proyecto de Unity cambia de profundidad. Si no aparece la marca
-    /// (un ZIP sin .git ni setup.ps1), se cae a la carpeta que contiene
-    /// el proyecto, que es donde estuvo siempre.
+    /// La raiz del proyecto: LectorStreaming.RaizDelRepo, la carpeta con
+    /// setup.ps1 y sap.py buscada SUBIENDO (la misma marca que
+    /// calculo/rutas.py). Contar carpetas hacia arriba apunta a otro lado
+    /// sin fallar si el proyecto de Unity cambia de profundidad. Si no
+    /// aparece la marca (una copia suelta del proyecto de Unity), se cae
+    /// a la carpeta que contiene el proyecto, que es donde estuvo siempre.
     static string RaizDelRepo()
     {
+        string raiz = LectorStreaming.RaizDelRepo();
+        if (raiz != null) return raiz;
         string proyecto = Directory.GetParent(Application.dataPath).FullName;
-        for (DirectoryInfo d = new DirectoryInfo(proyecto); d != null; d = d.Parent)
-        {
-            if (Directory.Exists(Path.Combine(d.FullName, ".git"))
-                || File.Exists(Path.Combine(d.FullName, ".git"))
-                || File.Exists(Path.Combine(d.FullName, "setup.ps1")))
-                return d.FullName;
-        }
         return Directory.GetParent(proyecto).FullName;
     }
 
