@@ -49,189 +49,13 @@ import os
 import sys
 import time
 
-from calculo import capacidad
-from calculo import demanda as dc
 from calculo import edificio as _ed
 from calculo import esfuerzos as es
 from calculo import laboratorio as lab
 from calculo import rutas
-from calculo.esfuerzos import (CASOS_BASE, CONVENCION, COTA_REDONDEO, DECIMALES_FUERZA,
-                               DECIMALES_ESTACION, FRACCION_DIAGONAL, N_ESTACIONES_CARGADA,
-                               bloque_caso, cargas_por_elemento, escala_deformada,
-                               lista_de_combinaciones, restricciones_como_el_servidor,
-                               rigidez_como_el_servidor)
-
-ORIGEN_RESULTADOS = ('laboratorio.resolver() en memoria, con los parametros de '
-                     'entrada/laboratorio.json')
-
-
-def _texto_vecxz(v):
-    return '(%s)' % ','.join('%g' % c for c in v)
-
-
-def _texto_restr(r):
-    return '[%s]' % ' '.join(str(v) for v in r)
-
-
-# ============================================================
-# FAMILIAS P-M
-# ============================================================
-def _fuente(fe):
-    fu = fe.get('fuente') or {}
-    partes = []
-    if fu.get('lamina'):
-        partes.append('lamina %s' % fu['lamina'])
-    if fu.get('elevacion'):
-        partes.append(str(fu['elevacion']))
-    if fu.get('eje'):
-        partes.append('eje %s' % fu['eje'])
-    return ', '.join(partes) or '(sin fuente declarada)'
-
-
-def _refuerzo(e, sec):
-    fe = e.get('enfierradura') or {}
-    if fe.get('tipo') == 'muro':
-        mv = (fe.get('malla_vertical') or {}).get('texto') or '-'
-        return ('malla vertical %s en %d capas + %d barras de borde (%d barras)'
-                % (mv, int(fe.get('capas', 2)), len(fe.get('barras_de_borde') or []),
-                   len(sec.barras)))
-    lon = fe.get('longitudinal') or {}
-    return ('%d D%g (%s por cara), estribo %s'
-            % (len(sec.barras), float(lon.get('diametro_mm', 0.0)),
-               lon.get('por_cara', '?'), (sec.estribo or {}).get('texto', '-')))
-
-
-def _clave_legible(firma):
-    seccion, b, h, n, As, estribo, malla = firma
-    return ('%s | %.2f x %.2f m | %d barras | As = %.2f cm2 | estribo %s | malla %s'
-            % (seccion, b, h, n, As * 1e4, estribo or '-', malla or '-'))
-
-
-def bloque_familias(modelo):
-    """
-    Una curva por familia de enfierradura, en orden de aparicion por id.
-    Agrupa con demanda.firma_de_seccion, la misma clave que usa la
-    revision (--todas): dos elementos con la misma firma comparten curva.
-    """
-    con_fierro = sorted((e for e in modelo['elementos'] if e.get('enfierradura')),
-                        key=lambda e: int(e['id']))
-    familias, indice_de, familia_de, secciones, curvas = [], {}, {}, {}, {}
-    for e in con_fierro:
-        eid = int(e['id'])
-        sec = capacidad.desde_elemento(modelo, eid)
-        secciones[eid] = sec
-        firma = dc.firma_de_seccion(e, sec)
-        if firma not in indice_de:
-            i = len(familias)
-            indice_de[firma] = i
-            puntos = capacidad.interaccion(sec)
-            curvas[i] = puntos
-            familias.append({
-                'indice': i,
-                'clave': _clave_legible(firma),
-                'tipo': e.get('tipo', ''),
-                'seccion': e.get('seccion', ''),
-                'b': round(sec.b, 4),
-                'h': round(sec.h, 4),
-                'As_cm2': round(sec.As * 1e4, 4),
-                'cuantia_pct': round(100.0 * sec.cuantia, 4),
-                'refuerzo': _refuerzo(e, sec),
-                'fuente': _fuente(e['enfierradura']),
-                'P': [round(float(p['P_kN']), DECIMALES_FUERZA) for p in puntos],
-                'Mn': [round(float(p['M_kNm']), DECIMALES_FUERZA) for p in puntos],
-                'Mmax': [round(float(p.get('M_max_kNm', 0.0)), DECIMALES_FUERZA)
-                         for p in puntos],
-                'de': [str(p.get('de', '')) for p in puntos],
-                'elementos': [],
-            })
-        familia_de[eid] = indice_de[firma]
-        familias[indice_de[firma]]['elementos'].append(eid)
-    return familias, familia_de, secciones, curvas
-
-
-# ============================================================
-# ELEMENTOS
-# ============================================================
-def bloque_elementos(modelo, cargas, familia_de):
-    """Lo fijo de cada elemento: ids, seccion, material, ejes, apoyos."""
-    nodos = {int(n['id']): (float(n['x']), float(n['y']), float(n['z']))
-             for n in modelo['nodos']}
-    secciones = {s['nombre']: s for s in modelo['secciones']}
-    material = modelo.get('material', {})
-    restr = restricciones_como_el_servidor(modelo)
-    de_nodo = _ed.indice_de_diafragma(modelo)
-    maestros = [int(d['nodo_maestro']) for d in modelo.get('diafragmas', [])]
-
-    def maestro_de(n):
-        i = de_nodo.get(n)
-        return maestros[i] if i is not None else -1
-
-    salida = []
-    for e in sorted(modelo['elementos'], key=lambda e: int(e['id'])):
-        eid, n1, n2 = int(e['id']), int(e['n1']), int(e['n2'])
-        tipo = e.get('tipo', '')
-        s = secciones[e['seccion']]
-        k = rigidez_como_el_servidor(e, s, nodos[n1], nodos[n2], material)
-
-        if k['propio']:
-            texto_mat = 'E y G propios de la seccion'
-            if s.get('E_del_cuerpo'):
-                texto_mat += ' (cuerpo %s)' % s['E_del_cuerpo']
-        else:
-            texto_mat = "hormigon f'c %g MPa, Ec = 4700 sqrt(f'c)" % k['fpc_MPa']
-
-        es_brazo = tipo in ('brazo', 'brazo_rigido')
-        r1, r2 = restr.get(n1, [0] * 6), restr.get(n2, [0] * 6)
-        d1, d2 = maestro_de(n1), maestro_de(n2)
-        condiciones = []
-        for nombre, n, r, d in (('n1', n1, r1, d1), ('n2', n2, r2, d2)):
-            if any(r):
-                condiciones.append('%s %d: %s %s' % (
-                    nombre, n, 'empotrado' if all(r) else 'apoyo', _texto_restr(r)))
-            if d >= 0:
-                condiciones.append('%s %d: diafragma rigido, maestro %d' % (nombre, n, d))
-        if es_brazo:
-            condiciones.append('brazo rigido: barra de rigidez x100 hasta la cara del muro')
-        if not condiciones:
-            condiciones.append('nodos libres: sin apoyo ni diafragma')
-
-        cargada = any(any(v != 0.0 for v in cargas[c].get(eid, (0.0, 0.0, 0.0)))
-                      for c in ('G', 'Q'))
-
-        salida.append({
-            'id': eid, 'n1': n1, 'n2': n2,
-            'tipo': tipo, 'seccion': e['seccion'],
-            # El momento que se compara con la curva: el de inercia mayor.
-            'momento_en_el_plano': (dc.momento_en_el_plano(s['Iy'], s['Iz'])
-                                    if tipo == 'muro' else ''),
-            'L': round(k['L'], DECIMALES_ESTACION),
-            'objeto_unity': 'Elem_%d_%s' % (eid, tipo),
-            'tag_opensees': ('element elasticBeamColumn %d %d %d A=%.4f E=%.4e '
-                             'G=%.4e J=%.3e Iy=%.3e Iz=%.3e vecxz=%s'
-                             % (eid, n1, n2, float(s['A']), k['E'], k['G'],
-                                float(s['J']), k['Iy_pasa'], k['Iz_pasa'],
-                                _texto_vecxz(k['vecxz']))),
-            'material': texto_mat,
-            'fpc_MPa': k['fpc_MPa'],
-            'E_kPa': round(k['E'], 4), 'G_kPa': round(k['G'], 4),
-            'poisson': round(k['poisson'], 6),
-            'gamma': float(s.get('gamma', material.get('gamma', 25.0))),
-            'A': float(s['A']), 'Iy': float(s['Iy']), 'Iz': float(s['Iz']),
-            'J': float(s['J']),
-            # Los muros del cuerpo antiguo declaran largo/espesor en vez de h/b.
-            'b': float(s.get('b') or s.get('espesor') or 0.0),
-            'h': float(s.get('h') or s.get('largo') or 0.0),
-            'vecxz': list(k['vecxz']),
-            'restr_n1': r1, 'restr_n2': r2,
-            'diafragma_n1': d1, 'diafragma_n2': d2,
-            'es_brazo_rigido': es_brazo,
-            'condiciones': '; '.join(condiciones),
-            'cargada': cargada,
-            'familia': familia_de.get(eid, -1),
-            'resultados': ORIGEN_RESULTADOS,
-        })
-    return salida
-
+from calculo.esfuerzos import (CONVENCION, COTA_REDONDEO, FRACCION_DIAGONAL,
+                               N_ESTACIONES_CARGADA, bloque_caso, escala_deformada,
+                               lista_de_combinaciones)
 
 # ============================================================
 def construir(argv=()):
@@ -240,28 +64,11 @@ def construir(argv=()):
     (resultados, contexto); el contexto trae lo intermedio para que las
     verificaciones, el Excel y la AR no tengan que rehacerlo.
     """
-    p = lab.cargar(list(argv))
-    modelo = _ed.estructura()
-    arm = lab.armar_casos(modelo, p)
-    datos, resultados = lab.resolver(modelo, arm['casos'])
-
-    cargas_base = {c: cargas_por_elemento(arm['casos'][c]) for c in CASOS_BASE}
-    familias, familia_de, secciones, curvas = bloque_familias(modelo)
-    elementos = bloque_elementos(modelo, cargas_base, familia_de)
-
-    nodos = {int(n['id']): n for n in modelo['nodos']}
-    por_id = {int(e['id']): e for e in modelo['elementos']}
-    largos = {eid: _ed.largo(e, nodos) for eid, e in por_id.items()}
-
-    # Los grupos de nucleo y el As*fy de cada uno se calculan UNA vez
-    # (cada As*fy arma una seccion de fibras); despues cada caso solo
-    # suma los P de las patas. Ver demanda.grupos_de_nucleo.
-    _cache = {}
-    nucleo_de = {}
-    for eid, patas in dc.grupos_de_nucleo(modelo).items():
-        asfy, sin_fierro = dc.asfy_de(modelo, patas, _cache)
-        nucleo_de[eid] = {'patas': patas, 'Asfy_kN': asfy,
-                          'sin_fierro': len(sin_fierro)}
+    b = es.base(argv)
+    p, modelo, arm, datos, resultados = b['p'], b['modelo'], b['arm'], b['datos'], b['resultados']
+    cargas_base, familias, familia_de = b['cargas_base'], b['familias'], b['familia_de']
+    secciones, curvas, elementos = b['secciones'], b['curvas'], b['elementos']
+    por_id, largos, nucleo_de = b['por_id'], b['largos'], b['nucleo_de']
 
     casos, cargas, combinaciones, cierre = [], {}, [], {}
     for nombre, tipo, texto, factores in lista_de_combinaciones(p):
