@@ -13,7 +13,8 @@ r"""
      salidas/       GENERADO: lo que leen Unity, la AR y Excel
      unity/         el visor (StreamingAssets recibe COPIAS de salidas/)
      ar/            la app de realidad aumentada (web/datos recibe ar.json)
-     verificacion/  la suite: compara, no escribe salidas
+     verificacion/  la suite: compara, no escribe salidas (registros/: lo que
+                    la app deja para ella)
      herramientas/  abrir y compilar Unity, regenerar assets
 
  La raiz se busca SUBIENDO hasta la marca (setup.ps1 junto a sap.py),
@@ -74,6 +75,11 @@ OTRAS_SALIDAS = {
     'ar': 'ar.json',
     'reanalisis': 'reanalisis.xlsx',
 }
+
+# --- lo que la app y el navegador escriben PARA la suite (no se regenera con
+#     preparar, asi que no va en salidas/): registros de captura, tracking AR,
+#     fotos del telefono ---
+REGISTROS = os.path.join(RAIZ, 'verificacion', 'registros')
 
 # --- codigo y proyectos ---
 CALCULO = os.path.join(RAIZ, 'calculo')
