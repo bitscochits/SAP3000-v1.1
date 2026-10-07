@@ -1,6 +1,6 @@
 # SAP3000 — Laboratorio estructural digital del Edificio de Ingeniería
 
-Grupo 7 · Métodos Computacionales en Obras Civiles · UAndes, 2026-02.
+Grupo 7 · Métodos Computacionales en Obras Civiles · UAndes, 2026-02
 
 El **Edificio de Ingeniería de la UAndes** modelado desde sus planos,
 resuelto con OpenSees, verificado numéricamente y mostrado en Unity (la
