@@ -367,5 +367,54 @@
   },
   "modo_por_defecto": "maqueta",
   "caso_por_defecto": "1.2G+1.0Q+1.4EX"
+ },
+ "pandeo": {
+  "_que_es": [
+   "PANDEO DE LAS BARRAS COMPRIMIDAS, Dhakal y Maekawa (2002), J. Struct. Eng. 128(9), 1139-1147.",
+   "Es un analisis APARTE (Honors): python sap.py revisar capacidad 200037 --pandeo. No cambia",
+   "ninguna curva P-M ni ningun numero del programa, que siguen con Steel01 (calculo/capacidad.py).",
+   "",
+   "Se usa ReinforcingSteel de OpenSees con -DMBuck L/D alfa, que es el modelo del paper:",
+   "  lambda = (L/D) raiz(fy/100), fy en MPa",
+   "  eps*/eps_y = 55 - 2.3 lambda >= 7                          (ec. 2)",
+   "  sig*/sig_l* = alfa (1.1 - 0.016 lambda), sig* >= 0.2 fy     (ec. 3)",
+   "  hasta eps*: sig/sig_l = 1 - (1 - sig*/sig_l*)(eps - eps_y)/(eps* - eps_y)   (ec. 1)",
+   "  despues: sig = sig* - 0.02 Es (eps - eps*), sin bajar de 0.2 fy",
+   "La verificacion C6 compara OpenSees contra esas ecuaciones (calculo.capacidad.dhakal_maekawa)."
+  ],
+  "acero": {
+   "fy_MPa": 420.0,
+   "fu_MPa": 630.0,
+   "Es_MPa": 200000.0,
+   "Esh_MPa": 4400.0,
+   "eps_sh": 0.008,
+   "eps_ult": 0.10
+  },
+  "_acero": [
+   "A630-420H: fy = 420 y fu = 630 MPa son sus nominales (los de una tarea del curso de hormigon",
+   "armado avanzado usaban fy = 400; se usa 420 porque es el fy de todo el programa).",
+   "Esh = 4400 MPa = 0.022 Es: la pendiente de endurecimiento de las barras de Mander et al. (1984)",
+   "con que el paper verifica su microanalisis (p. 1142). SUPUESTO.",
+   "eps_sh = 0.008 = 3.8 eps_y: el fin de la meseta de fluencia. SUPUESTO, dentro de lo que usa el",
+   "paper (2 eps_y en las barras de Monti y Nuti, 11.7 eps_y en las de Mander). NO se puede usar sin",
+   "meseta (eps_sh = eps_y): con 0.0022 ReinforcingSteel no converge en la seccion (Newton oscila con",
+   "la norma fija desde phi = 0.0082); desde 0.005 llega al final. Con 0.008 el Mn a 0.003 de la",
+   "200037 da 1188.3 kN m, contra 1190.2 con el Steel01 del programa.",
+   "eps_ult = 0.10 = EPS_SU de calculo/capacidad.py (alargamiento del A630-420H)."
+  ],
+  "_supuesto": true,
+  "alfa": 1.0,
+  "_alfa": [
+   "El paper da 1.0 para endurecimiento lineal continuo y 0.75 para elastoplastico perfecto; una",
+   "barra real va entre los dos (p. 1146): mas cerca de 1 si endurece mucho y por un rango largo,",
+   "que es el A630-420H (fu/fy = 1.5 hasta eps_ult = 0.10). Se usa 1.0, el de la tarea del curso;",
+   "es el extremo que menos degrada. Hasta eps* casi no importa: alfa solo escala sig*."
+  ],
+  "separaciones_de_estribo": [1, 2],
+  "_separaciones": [
+   "El largo de pandeo L, en separaciones del estribo: L = n s. n = 1 supone que cada estribo sujeta",
+   "la barra (el caso del programa); n = 2 es la sensibilidad, si el estribo es flexible y la barra",
+   "pandea saltandose uno. Es el supuesto que mas mueve el resultado, mas que alfa."
+  ]
  }
 }

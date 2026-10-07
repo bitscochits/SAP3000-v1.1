@@ -1,4 +1,4 @@
-CAPTURA VISOR   2026-10-06 22:43:12
+CAPTURA VISOR   2026-10-06 23:24:03
 Numeros leidos de lo que Unity cargo (float de 32 bits, formato G9).
 DATO servidor.url = http://localhost:5000/ping
 DATO servidor.responde = True
@@ -778,7 +778,7 @@ DATO sup.pre.E3.caso_activo = E3
 DATO sup.libre.estado_de_referencia = E3
 DATO sup.libre.lambdas = 1.20000005,1,-1.39999998,0
 DATO sup.libre.pedido_salio = True
-DATO sup.libre.segundos = 0.82516098
+DATO sup.libre.segundos = 0.918983459
 DATO sup.libre.mensaje = LIBRE = 1.20 G + 1.00 Q - 1.40 EX
 DATO sup.libre.hecho = True
 DATO scroll.sup.factores_libres = 467
@@ -888,14 +888,14 @@ DATO sup.libre.E3.equilibrio.aplicada_kN = -15269.9053,0,-139158.422
 DATO sup.libre.E3.equilibrio.reaccion_kN = 15269.9053,9.99999975E-05,139158.422
 DATO sup.libre.E3.equilibrio.error_kN = 7.66200028E-05,0.000119999997,-0.000299279985
 DATO sup.libre.E3.equilibrio.confiable = True
-DATO sup.libre.E3.origen = combinado por el servidor de Python (POST http://localhost:5000/combinar) a las 22:43:45, en 0.52 s. Factores que uso Python: G 1.2, Q 1, EX -1.4, EY 0.
+DATO sup.libre.E3.origen = combinado por el servidor de Python (POST http://localhost:5000/combinar) a las 23:24:36, en 0.59 s. Factores que uso Python: G 1.2, Q 1, EX -1.4, EY 0.
 DATO sup.libre.E3.caso_activo = LIBRE
 
 ==================== D2. SUPERPOSICION INSTANTANEA (Unity combina los casos base) ====================
 DATO ins.version_antes = 0
 DATO ins.E1.lambdas = 1,1,0,0
 DATO ins.E1.version = 1
-DATO ins.E1.ms = 2.14004517
+DATO ins.E1.ms = 1.73187256
 DATO ins.E1.caso_activo = INSTANT
 DATO ins.E1.mapa_pintadas = 950
 DATO ins.E1.nombre = INSTANT
@@ -979,7 +979,7 @@ DATO ins.E1.origen = combinado en Unity (VisorResultados.Instantanea.cs): escala
 DATO ins.E1.caso_activo = INSTANT
 DATO ins.E2.lambdas = 1.20000005,1.60000002,0,0
 DATO ins.E2.version = 2
-DATO ins.E2.ms = 2.04467773
+DATO ins.E2.ms = 1.28936768
 DATO ins.E2.caso_activo = INSTANT
 DATO ins.E2.mapa_pintadas = 950
 DATO ins.E2.nombre = INSTANT
@@ -1063,7 +1063,7 @@ DATO ins.E2.origen = combinado en Unity (VisorResultados.Instantanea.cs): escala
 DATO ins.E2.caso_activo = INSTANT
 DATO ins.E3.lambdas = 1.20000005,1,-1.39999998,0
 DATO ins.E3.version = 3
-DATO ins.E3.ms = 1.93405151
+DATO ins.E3.ms = 1.51443481
 DATO ins.E3.caso_activo = INSTANT
 DATO ins.E3.mapa_pintadas = 950
 DATO ins.E3.nombre = INSTANT
@@ -1156,7 +1156,7 @@ DATO ins.E3.origen = combinado en Unity (VisorResultados.Instantanea.cs): escala
 DATO ins.E3.caso_activo = INSTANT
 DATO ins.feo.lambdas = -0.5,0.349999994,1.04999995,-0.699999988
 DATO ins.feo.version = 4
-DATO ins.feo.ms = 5.22994995
+DATO ins.feo.ms = 1.73187256
 DATO ins.feo.caso_activo = INSTANT
 DATO ins.feo.mapa_pintadas = 950
 DATO ins.feo.nombre = INSTANT
@@ -1274,7 +1274,7 @@ DATO foto.18b_superposicion_instantanea_E3_en_Unity.cabecera.fuente = anexo
 DATO foto.18b_superposicion_instantanea_E3_en_Unity.cabecera.texto = Caso activo  INSTANT   1.20 G + 1.00 Q - 1.40 EX | Desp. max 25.11 mm | NO PASA 9/207 (3 fuera de curva)
 DATO foto.18b_superposicion_instantanea_E3_en_Unity.camara = centro (17.12, 1.93, 58.30) distancia 101.5
 DATO ins.foto_E3.version = 5
-DATO ins.foto_E3.ms = 4.98580933
+DATO ins.foto_E3.ms = 1.40380859
 DATO scroll.qa.s4.demanda / capacidad = 353
 
 === FOTO 18c_capacidad_columna_200005_PM_con_sliders_instantaneos_feo.jpg ===
@@ -1441,8 +1441,8 @@ DATO m1.url = http://localhost:5000/analizar
 DATO m1.timeout_s = 120
 DATO m1.antes.peticion_salio = True
 DATO m1.antes.ok = True
-DATO m1.antes.segundos = 10.1449127
-DATO m1.antes.estado = OK: 4 caso(s) [G, Q, EX, EY] en 10.0 s
+DATO m1.antes.segundos = 9.69750977
+DATO m1.antes.estado = OK: 4 caso(s) [G, Q, EX, EY] en 9.5 s
 DATO m1.antes.error = 
 DATO m1.antes.elementos_enviados = 950
 DATO m1.antes.G.ok = True
@@ -1511,8 +1511,8 @@ DATO m1.anexo_calza = False
 DATO m1.movil_aviso = Se edito el modelo (borrar elemento 200069): la carga movil precalculada es del modelo original y se apago. Vuelve a cargar la escena para usarla.
 DATO m1.despues.peticion_salio = True
 DATO m1.despues.ok = True
-DATO m1.despues.segundos = 8.78552246
-DATO m1.despues.estado = OK: 4 caso(s) [G, Q, EX, EY] en 8.6 s
+DATO m1.despues.segundos = 9.31022263
+DATO m1.despues.estado = OK: 4 caso(s) [G, Q, EX, EY] en 9.1 s
 DATO m1.despues.error = 
 DATO m1.despues.elementos_enviados = 949
 DATO m1.despues.G.ok = True
@@ -1618,13 +1618,13 @@ DATO m1.seleccion_editor = nodo 200186, elemento -1
 
 ==================== FIN ====================
 DATO fotos = 25
-DATO segundos = 67.4960251
+DATO segundos = 67.267189
 
 DATO archivos.modelo.md5 = 2186da2264d948e4f19ce010a905f90a
 DATO archivos.resultados.md5 = 95c4fd9808193c7b2ec9480b99b1e1f9
 DATO archivos.carga_movil.md5 = e3164397864cc2e6c3dd535d0149b6c1
 DATO archivos.persona.md5 = b54a4a4dc2d7bb83aa9772fafdbe9c7f
 DATO archivos.relieve.md5 = 56a564a4fd60dc6f7c4e353e2d5836e8
-DATO archivos.excel.md5 = 3d02e7105de854958c83e2c45baf7f35
+DATO archivos.excel.md5 = 17746c0856b28c9719e7f81a71d4b67d
 DATO log.errores = 0
 DATO salida = 0

@@ -81,6 +81,7 @@ SUITE = [
     ('C3', 'capacidad: demanda --todas', ['verificacion.capacidad', 'demanda_todas'], False),
     ('C4', 'capacidad: nucleos = grupos de resultados.json', ['verificacion.capacidad', 'nucleos'], False),
     ('C5', 'capacidad: losa colaborante (regla)', ['verificacion.capacidad', 'losa_colaborante'], False),
+    ('C6', 'capacidad: pandeo Dhakal-Maekawa (Honors)', ['verificacion.capacidad', 'pandeo'], False),
     # --- los resultados del laboratorio que lee el visor
     ('R1', 'resultados: al dia y cierre f_j', ['verificacion.resultados', 'al_dia'], False),
     ('R2', 'resultados: esfuerzos y signos [1]-[8]', ['verificacion.resultados', 'bloques_1_8'], False),

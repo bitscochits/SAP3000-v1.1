@@ -101,7 +101,7 @@ Lo mínimo para ver el edificio:
 python sap.py preparar      # calcular + exportar todo + sincronizar (unos minutos)
 python sap.py unity app     # abre el visor (la primera vez compila la app)
 python sap.py servidor      # en otra terminal, opcional: superposición LIBRE y reanálisis
-python sap.py verificar     # la suite: 42 comprobaciones
+python sap.py verificar     # la suite: 43 comprobaciones
 ```
 
 `python sap.py` sin nada imprime el flujo, qué salidas faltan o quedaron
@@ -149,7 +149,7 @@ q = 2.5 kN/m²); un `--q` cualquiera queda marcado como dictado.
 | `laboratorio [flags]` | las Partes A, B y C: q·A, corte basal y superposición |
 | `sismo [EX\|EY] [--detalle]` | el sismo de los casos del modelo: corte, sentido, torsión de piso, centro de rigidez |
 | `superposicion [--lambdas G Q EX EY \| --explicita]` | un caso combinado cualquiera, o las 11 combinaciones contra OpenSees resolviendo la carga combinada |
-| `capacidad <elem> [--pm --mphi --dibujo --sensibilidad]` | la sección de fibras de una columna o muro: M-φ y curva P-M |
+| `capacidad <elem> [--pm --mphi --dibujo --sensibilidad --pandeo]` | la sección de fibras de una columna o muro: M-φ y curva P-M. `--pandeo` (Honors): la misma columna con el pandeo de barras de Dhakal y Maekawa (2002), aparte; no cambia ninguna curva del programa |
 | `demanda <elem>\|--todas\|--lista [--comb G Q EX EY] [--grafico --mphi]` | el punto (P, M) sobre su curva, para uno o para todos |
 | `rc [elem]` | fibras contra el cálculo a mano (Whitney, β₁, balanceado) |
 | `nucleos` | los grupos de patas de núcleo y su axial |
@@ -259,7 +259,7 @@ verificar la lectura de los JSON). `Assets/StreamingAssets/` son
 
 ### `verificacion/`
 
-`suite.py` (la lista de las 42 entradas y la tabla QA),
+`suite.py` (la lista de las 43 entradas y la tabla QA),
 `numeros_de_control.json` (los números que no pueden cambiar sin una
 decisión) y un módulo por tema (`edificio`, `motor`, `laboratorio`,
 `capacidad`, `resultados`, `persona`, `unity`, `excel`, `capturas`, `ar`).
@@ -575,7 +575,7 @@ captura del teléfono en `verificacion/registros/iphone/` (`.jpg`, `.png`,
 ## 10. Verificar
 
 ```powershell
-python sap.py verificar               # las 42
+python sap.py verificar               # las 43
 python sap.py verificar --rapido      # sin las 6 lentas (36)
 python sap.py verificar --solo U1 L4  # esas entradas, por su código
 python sap.py verificar --solo sismo  # las que nombran esa palabra

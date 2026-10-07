@@ -13,6 +13,7 @@ r"""
    python sap.py revisar capacidad 200037 --mphi   el grafico M-phi a varios axiales
    python sap.py revisar capacidad 200037 --dibujo la discretizacion, dibujada
    python sap.py revisar capacidad 200037 --sensibilidad
+   python sap.py revisar capacidad 200037 --pandeo  Dhakal-Maekawa (Honors)
 
  Sirve para los dos: una columna es una seccion cuadrada con
  armadura perimetral y un muro una seccion muy alargada con malla
@@ -569,7 +570,7 @@ def _armar(sec, nf=FIBRAS_NUCLEO):
                              -0.2 * sec.fpc, -EPS_CU_RECUBRIMIENTO)
     ops.uniaxialMaterial('Concrete01', 2, -sec.fpc, -EPS_C0,
                          0.0, -EPS_CU_RECUBRIMIENTO)
-    ops.uniaxialMaterial('Steel01', 3, sec.fy, sec.Es, sec.endurecimiento)
+    _definir_acero(ops, sec)       # Steel01, o ReinforcingSteel en el analisis de pandeo
 
     ops.section('Fiber', 1, '-GJ', 1.0e8)
     for p in parches(sec, nf):
@@ -925,6 +926,9 @@ def main(argv):
         for s in sensibilidad_discretizacion(sec):
             print('    %3d fibras  M_max = %8.1f kN m   %.3f %% vs la mas fina'
                   % (s['fibras'], s['M_max'], 100 * s['error_vs_mas_fino']))
+
+    if '--pandeo' in argv:
+        main_pandeo(sec, elem)
     return 0
 
 
@@ -959,6 +963,250 @@ def fierro_simetrico(sec, tol=1e-6):
         return sorted((round(y, 9), round(z, 9), round(a, 12))
                       for y, z, a in barras)
     return clave(sec.barras) == clave((-y, z, a) for y, z, a in sec.barras)
+
+
+# ============================================================
+# PANDEO DE LAS BARRAS: Dhakal y Maekawa (2002)
+# ============================================================
+# Un analisis APARTE (Honors), que no toca ninguna curva del programa:
+#
+#     python sap.py revisar capacidad 200037 --pandeo
+#
+# El acero del programa es Steel01. Aca se corre la MISMA seccion con
+# ReinforcingSteel de OpenSees, sin y con -DMBuck (el modelo de pandeo de
+# Dhakal y Maekawa, J. Struct. Eng. 128(9), 2002), y se compara. Los
+# supuestos viven en entrada/laboratorio.json, bloque "pandeo".
+#
+# Las ecuaciones del paper estan escritas UNA vez, en dhakal_maekawa(); la
+# verificacion C6 las compara con lo que hace OpenSees.
+
+def parametros_pandeo():
+    """El bloque "pandeo" de entrada/laboratorio.json."""
+    import json
+    with open(rutas.LABORATORIO, encoding='utf-8') as f:
+        return json.load(f)['pandeo']
+
+
+def dhakal_maekawa(eps, sig_local, fy_kPa, Es_kPa, L_D, alfa=1.0):
+    r"""
+    El esfuerzo PROMEDIO de una barra comprimida con pandeo, ecuaciones
+    (1) a (3) del paper. eps y sig_local en compresion POSITIVA, arreglos
+    crecientes que tienen que llegar mas alla de eps*: sig_local es la
+    curva de la misma barra sin pandeo (la "point wise").
+
+        lambda = (L/D) raiz(fy/100)            fy en MPa: el paper lo define asi
+        eps*  = eps_y (55 - 2.3 lambda),  eps*/eps_y >= 7            (2)
+        sig*  = alfa (1.1 - 0.016 lambda) sig_l(eps*),  >= 0.2 fy     (3)
+        eps_y < eps <= eps*:  sig = sig_l [1 - (1 - sig*/sig_l*) (eps - eps_y)/(eps* - eps_y)]   (1)
+        eps > eps*:           sig = sig* - 0.02 Es (eps - eps*),  >= 0.2 fy
+
+    Devuelve (sig, eps*, sig*, lambda).
+    """
+    import numpy as np
+    eps = np.asarray(eps, dtype=float)
+    sig_local = np.asarray(sig_local, dtype=float)
+    ey = fy_kPa / Es_kPa
+    lam = L_D * math.sqrt(fy_kPa / 1000.0 / 100.0)
+    e_est = max(55.0 - 2.3 * lam, 7.0) * ey
+    if e_est > eps[-1]:
+        raise ValueError('la curva local llega a %.4f y eps* es %.4f' % (eps[-1], e_est))
+    sl_est = float(np.interp(e_est, eps, sig_local))
+    s_est = max(alfa * (1.1 - 0.016 * lam) * sl_est, 0.2 * fy_kPa)
+    sig = sig_local.copy()
+    m = (eps > ey) & (eps <= e_est)
+    sig[m] = sig_local[m] * (1.0 - (1.0 - s_est / sl_est) * (eps[m] - ey) / (e_est - ey))
+    m = eps > e_est
+    sig[m] = np.maximum(s_est - 0.02 * Es_kPa * (eps[m] - e_est), 0.2 * fy_kPa)
+    return sig, e_est, s_est, lam
+
+
+def _argumentos_reinforcing(p):
+    """fy, fu, Es, Esh, eps_sh, eps_ult de ReinforcingSteel, en kPa."""
+    return (p['fy_MPa'] * 1e3, p['fu_MPa'] * 1e3, p['Es_MPa'] * 1e3,
+            p['Esh_MPa'] * 1e3, p['eps_sh'], p['eps_ult'])
+
+
+def curva_de_barra(acero, L_D=None, alfa=1.0, eps_max=0.12, n=1201):
+    """
+    Una barra sola en compresion monotona con ReinforcingSteel (con
+    -DMBuck si se da L_D). Devuelve (eps, sig) en compresion positiva, kPa.
+    Hace ops.wipe(): no llamarla con una seccion armada.
+    """
+    import numpy as np
+    import openseespy.opensees as ops
+    ops.wipe()
+    ops.model('basic', '-ndm', 1, '-ndf', 1)
+    extra = ['-DMBuck', float(L_D), float(alfa)] if L_D else []
+    ops.uniaxialMaterial('ReinforcingSteel', 1, *_argumentos_reinforcing(acero), *extra)
+    eps = np.linspace(0.0, eps_max, n)
+    sig = []
+    for e in eps:
+        ops.testUniaxialMaterial(1)
+        ops.setStrain(-float(e))
+        sig.append(-ops.getStress())
+    ops.wipe()
+    return eps, np.array(sig)
+
+
+def esbeltez(sec, n_separaciones=1):
+    """
+    L/D de las barras de la seccion: L = n x la separacion del estribo, D
+    el de la barra (todas iguales: en un muro, que no tiene estribo y mezcla
+    diametros, el pandeo no se revisa).
+    """
+    s = float(sec.estribo.get('separacion_cm', 0.0)) / 100.0
+    areas = sorted({round(a, 12) for _y, _z, a in sec.barras})
+    if s <= 0 or len(areas) != 1:
+        raise SystemExit('%s: el pandeo se revisa en columnas con estribo y barras de un solo '
+                         'diametro (separacion %.2f m, %d diametros)' % (sec.nombre, s, len(areas)))
+    D = math.sqrt(4.0 * areas[0] / math.pi)
+    return n_separaciones * s / D, D, s
+
+
+def con_acero(sec, acero, L_D=None, alfa=1.0):
+    """La MISMA seccion con ReinforcingSteel (y pandeo si L_D). Una copia."""
+    otra = copy.copy(sec)
+    otra.acero_reinforcing = {'acero': acero, 'L_D': L_D, 'alfa': alfa}
+    otra.nombre = sec.nombre + (' (D-M L/D %.2f)' % L_D if L_D else ' (ReinforcingSteel)')
+    return otra
+
+
+def _definir_acero(ops, sec):
+    """El material 3 de la seccion: Steel01 salvo en el analisis de pandeo."""
+    r = getattr(sec, 'acero_reinforcing', None)
+    if not r:
+        ops.uniaxialMaterial('Steel01', 3, sec.fy, sec.Es, sec.endurecimiento)
+        return
+    extra = ['-DMBuck', float(r['L_D']), float(r['alfa'])] if r['L_D'] else []
+    ops.uniaxialMaterial('ReinforcingSteel', 3, *_argumentos_reinforcing(r['acero']), *extra)
+
+
+def analisis_pandeo(sec, fracciones=(0.0, 0.30)):
+    """
+    La seccion con los aceros que se comparan, a cada axial (fraccion de
+    la compresion pura): Steel01 (el del programa), ReinforcingSteel sin
+    pandeo y con Dhakal-Maekawa para cada largo de pandeo declarado.
+    """
+    p = parametros_pandeo()
+    acero, alfa = p['acero'], float(p['alfa'])
+    if abs(acero['fy_MPa'] * 1e3 - sec.fy) > 1e-6 or abs(acero['Es_MPa'] * 1e3 - sec.Es) > 1e-6:
+        raise SystemExit('el acero del bloque "pandeo" (fy %.0f, Es %.0f MPa) no es el de la seccion'
+                         % (acero['fy_MPa'], acero['Es_MPa']))
+    variantes = [('Steel01 (el del programa)', sec, None),
+                 ('ReinforcingSteel sin pandeo', con_acero(sec, acero), None)]
+    for n in p['separaciones_de_estribo']:
+        L_D, D, s = esbeltez(sec, n)
+        variantes.append(('Dhakal-Maekawa, L = %d s (L/D %.2f)' % (n, L_D),
+                          con_acero(sec, acero, L_D, alfa), L_D))
+    filas = []
+    for f in fracciones:
+        P = f * sec.P_compresion
+        for nombre, s_, L_D in variantes:
+            r = momento_curvatura(s_, P=P)
+            filas.append({'fraccion': f, 'P_kN': P, 'acero': nombre, 'L_D': L_D,
+                          'M_aci': r['M_aci'], 'M_max': r['M_max'],
+                          'phi_final': r['phi'][-1], 'eps_c_final': r['eps_hormigon_final'],
+                          'motivo': r['motivo_termino'], 'phi': r['phi'], 'M': r['M']})
+    return {'parametros': p, 'filas': filas}
+
+
+def dibujar_pandeo(sec, res, destino):
+    """
+    Dos graficos: la barra sola (la local, OpenSees -DMBuck y las
+    ecuaciones del paper) y el M-phi de la seccion con cada acero.
+    """
+    import numpy as np
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    p = res['parametros']
+    acero, alfa = p['acero'], float(p['alfa'])
+    fy, Es = acero['fy_MPa'] * 1e3, acero['Es_MPa'] * 1e3
+    conf = sec.confinamiento()
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13, 5.2))
+
+    e, sl = curva_de_barra(acero)
+    a1.plot(e * 100, sl / fy, 'k-', lw=1.6, label='local, sin pandeo')
+    for n, estilo in zip(p['separaciones_de_estribo'], ('tab:blue', 'tab:red', 'tab:green')):
+        L_D, _D, _s = esbeltez(sec, n)
+        _, so = curva_de_barra(acero, L_D, alfa)
+        sd, ee, _se, lam = dhakal_maekawa(e, sl, fy, Es, L_D, alfa)
+        a1.plot(e * 100, so / fy, '-', color=estilo, lw=1.6,
+                label='OpenSees -DMBuck, L = %d s (L/D %.2f, $\\lambda$ %.1f)' % (n, L_D, lam))
+        a1.plot(e * 100, sd / fy, '--', color=estilo, lw=1.2, label='paper ec. (1)-(3), L = %d s' % n)
+        a1.plot([ee * 100], [np.interp(ee, e, so) / fy], 'o', color=estilo, ms=5)
+    if conf:
+        a1.axvline(conf['eps_cu'] * 100, color='0.4', ls=':', lw=1.2)
+        a1.text(conf['eps_cu'] * 100, 1.62, '  $\\varepsilon_{cu}$ del nucleo\n  (fin del M-$\\phi$)',
+                fontsize=8, color='0.3')
+    a1.axvline(EPS_C_ACI * 100, color='0.6', ls=':', lw=1.0)
+    a1.set_xlabel('deformacion de compresion de la barra [%]')
+    a1.set_ylabel('$\\sigma / f_y$')
+    a1.set_title('Barra %s sola en compresion (A630-420H)' % ('D%.0f' % (esbeltez(sec)[1] * 1000)))
+    a1.set_xlim(0, 12)
+    a1.set_ylim(0, 1.8)
+    a1.grid(alpha=0.25)
+    a1.legend(fontsize=7.5, loc='lower left')
+
+    colores = {'Steel01 (el del programa)': '0.55', 'ReinforcingSteel sin pandeo': 'k'}
+    otros = iter(('tab:blue', 'tab:red', 'tab:green'))
+    f_max = max(r['fraccion'] for r in res['filas'])
+    for r in res['filas']:
+        if r['fraccion'] != f_max:
+            continue
+        c = colores.get(r['acero']) or next(otros)
+        a2.plot(r['phi'], r['M'], color=c, lw=1.5,
+                ls='--' if r['acero'].startswith('Steel01') else '-',
+                label='%s: M max %.0f kN m' % (r['acero'], r['M_max']))
+    a2.set_xlabel('curvatura $\\phi$ [1/m]')
+    a2.set_ylabel('M [kN m]')
+    a2.set_title('M-$\\phi$ de %s con P = %.2f P$_0$ = %.0f kN'
+                 % (sec.nombre.split(' (')[0], f_max, f_max * sec.P_compresion))
+    a2.grid(alpha=0.25)
+    a2.legend(fontsize=7.5, loc='lower right')
+    fig.tight_layout()
+    fig.savefig(destino, dpi=150)
+    plt.close(fig)
+
+
+def main_pandeo(sec, elem):
+    """Lo que imprime --pandeo, y su figura."""
+    res = analisis_pandeo(sec)
+    p = res['parametros']
+    acero = p['acero']
+    print()
+    print('  PANDEO DE LAS BARRAS (Dhakal y Maekawa 2002), supuestos en entrada/laboratorio.json "pandeo"')
+    print('    A630-420H: fy %.0f, fu %.0f, Esh %.0f MPa, eps_sh %.4f, eps_ult %.2f; alfa %.2f'
+          % (acero['fy_MPa'], acero['fu_MPa'], acero['Esh_MPa'], acero['eps_sh'], acero['eps_ult'],
+             p['alfa']))
+    e, sl = curva_de_barra(acero)
+    for n in p['separaciones_de_estribo']:
+        L_D, D, s = esbeltez(sec, n)
+        _sd, ee, se, lam = dhakal_maekawa(e, sl, acero['fy_MPa'] * 1e3, acero['Es_MPa'] * 1e3,
+                                          L_D, p['alfa'])
+        print('    L = %d x %.2f m, D = %.0f mm: L/D = %.2f, lambda = %.2f, eps* = %.4f, '
+              'sig* = %.0f MPa' % (n, s, D * 1000, L_D, lam, ee, se / 1000))
+    conf = sec.confinamiento()
+    if conf:
+        print('    el M-phi termina con el nucleo a eps_cu = %.4f' % conf['eps_cu'])
+    print()
+    print('    %6s %-38s %9s %9s %10s  %s' % ('P/P0', 'acero', 'Mn 0.003', 'M max', 'phi final', 'termino'))
+    base = {}
+    for r in res['filas']:
+        if r['acero'].startswith('ReinforcingSteel'):
+            base[r['fraccion']] = r['M_max']
+        d = ''
+        if r['L_D'] and base.get(r['fraccion']):
+            d = '  (%+.1f %% de M max)' % (100 * (r['M_max'] / base[r['fraccion']] - 1))
+        print('    %6.2f %-38s %9s %9.1f %10.4f  %s%s'
+              % (r['fraccion'], r['acero'], ('%.1f' % r['M_aci']) if r['M_aci'] else '-',
+                 r['M_max'], r['phi_final'], r['motivo'], d))
+    destino = os.path.join(rutas.FIGURAS, 'pandeo_%s.png' % elem)
+    rutas.asegurar(destino)
+    dibujar_pandeo(sec, res, destino)
+    print()
+    print('  barra y M-phi -> %s' % os.path.relpath(destino, rutas.RAIZ))
+    return res
 
 
 if __name__ == '__main__':

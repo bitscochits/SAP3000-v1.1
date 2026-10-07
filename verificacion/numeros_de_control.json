@@ -81,6 +81,16 @@
   "nariz_P_kN": "4186",
   "nariz_M_kNm": "1762"
  },
+ "pandeo_200037": {
+  "_de_donde": "C6 (Honors): Dhakal y Maekawa (2002) con ReinforcingSteel -DMBuck, supuestos en entrada/laboratorio.json 'pandeo'. L = s = 0.10 m y D = 25 mm; M max del M-phi con P = 0.30 P0, sin pandeo, con L = s y con L = 2 s. eps* > eps_cu: con estribos a 10 cm las barras no alcanzan a pandear antes de que se rompa el nucleo.",
+  "L_D": "4.00",
+  "lambda": "8.20",
+  "eps_estrella": "0.0759",
+  "eps_cu_nucleo": "0.0279",
+  "M_max_sin_kNm": "2212.9",
+  "M_max_DM_s_kNm": "2212.1",
+  "M_max_DM_2s_kNm": "2204.7"
+ },
  "demanda": {
   "_de_donde": "C3: calculo.demanda --todas con G + Q",
   "familias": 54,

@@ -1,5 +1,5 @@
 AmbienteVisor: suelo en z = -7.97 m (info.cota_terreno); hueco del subterraneo 0 m2 sobre 0 estampas bajo la cota (fondo z = -7.97); 0 apoyos en terreno fuera del hueco, 0 sobre muros del subterraneo.
-AmbienteVisor: texturas procedurales de 512 px en 1100 ms.
+AmbienteVisor: texturas procedurales de 512 px en 1087 ms.
 AmbienteVisor: 1 nivel(es) de terreno sobre la base (z = -7.97 m, info.terrenos), celda 0.25 m, 15039 vertices. Terraza 'ingenieria: terraza oriente (N.R. -4.01)' en z = -4.01 m (1 poligono(s)): 777 m2 de tierra, 124 m2 recortados alrededor de 90 estampas que bajan a la base; 34 apoyos sobre tierra, 6 sobre la estructura que baja.
 AmbienteVisor: losas de dibujo desde areas_tributarias (716 entradas): z -4.01: 187 poligonos, 1664.2 m2 dibujados, cara superior -3.60; z -0.05: 171 poligonos, 1304.0 m2 dibujados, cara superior 0.36; z 3.91: 171 poligonos, 1304.0 m2 dibujados, cara superior 4.32; z 7.87: 189 poligonos, 1397.4 m2 dibujados, cara superior 8.28; z 11.83: 176 poligonos, 1352.4 m2 dibujados, cara superior 12.24
 AmbienteVisor: relieve del sitio de 50 x 63 nodos cada 4.0 m, 2 huecos, fondo en z = -7.97.
@@ -16,6 +16,6 @@ DATO archivos.resultados.md5 = 95c4fd9808193c7b2ec9480b99b1e1f9
 DATO archivos.carga_movil.md5 = e3164397864cc2e6c3dd535d0149b6c1
 DATO archivos.persona.md5 = b54a4a4dc2d7bb83aa9772fafdbe9c7f
 DATO archivos.relieve.md5 = 56a564a4fd60dc6f7c4e353e2d5836e8
-DATO archivos.excel.md5 = 3d02e7105de854958c83e2c45baf7f35
+DATO archivos.excel.md5 = 17746c0856b28c9719e7f81a71d4b67d
 DATO log.errores = 0
 DATO salida = 0

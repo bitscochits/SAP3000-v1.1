@@ -3,13 +3,14 @@ r"""
 ================================================================
  verificacion/capacidad.py  -  LO QUE AGUANTA CADA SECCION, COMPROBADO
 ================================================================
- Cinco bloques; sin bloque corre los cinco:
+ Seis bloques; sin bloque corre los seis:
 
    python -m verificacion.capacidad mphi_pm            # C1
    python -m verificacion.capacidad rc_a_mano [elem]   # C2 (lenta)
    python -m verificacion.capacidad demanda_todas      # C3
    python -m verificacion.capacidad nucleos            # C4
    python -m verificacion.capacidad losa_colaborante   # C5
+   python -m verificacion.capacidad pandeo             # C6 (Honors)
 
  MPHI_PM. La seccion de fibras de 100018 (columna del cuerpo antiguo),
  200001 y 200037 (columnas del LT2; la ultima es la del marcador de la
@@ -67,7 +68,7 @@ from calculo import rutas
 from verificacion.comun import Informe, titulo
 from verificacion.suite import Fila, calza, consola_tolerante, numeros_de_control
 
-BLOQUES = ('mphi_pm', 'rc_a_mano', 'demanda_todas', 'nucleos', 'losa_colaborante')
+BLOQUES = ('mphi_pm', 'rc_a_mano', 'demanda_todas', 'nucleos', 'losa_colaborante', 'pandeo')
 
 CASOS = lab.CASOS_BASE
 
@@ -950,12 +951,123 @@ def losa_colaborante(inf, args=None):
 
 
 # ============================================================
+# PANDEO DE LAS BARRAS (Dhakal y Maekawa 2002) - Honors
+# ============================================================
+# OpenSees (ReinforcingSteel -DMBuck) contra las ecuaciones del paper,
+# hasta eps*. Cota MEDIDA, no elegida: con el acero de laboratorio.json
+# la peor diferencia es 0.15 % de fy con L/D = 4 y 1.7 % con L/D = 8. La
+# causa: OpenSees degrada con la misma pendiente que la ec. (1) (0.434
+# contra 0.422 y 4.72 contra 4.75 por unidad de deformacion) pero empieza
+# un poco despues de eps_y. Despues de eps* OpenSees baja mas suave que el
+# -0.02 Es del paper; eso queda fuera del M-phi (termina en eps_cu) y no
+# se compara.
+TOL_DM_OPENSEES = 0.02          # de fy, hasta eps*
+TOL_DM_PENDIENTE = 0.05         # la pendiente de la degradacion, relativa
+
+
+def pandeo(inf, args=None):
+    """C6: Dhakal-Maekawa en OpenSees = el paper, y lo que le hace a la 200037."""
+    import numpy as np
+    check = inf.check
+    p = capacidad.parametros_pandeo()
+    a, alfa = p['acero'], float(p['alfa'])
+    fy, Es = a['fy_MPa'] * 1e3, a['Es_MPa'] * 1e3
+    ey = fy / Es
+
+    print('=' * 64)
+    print('  PANDEO DE LAS BARRAS: Dhakal y Maekawa (2002)')
+    print('=' * 64)
+
+    print('\n[1] las ecuaciones (2) y (3), contra las rectas de su Fig. 10')
+    e, sl = capacidad.curva_de_barra(a, n=4001)
+    lam_mano = 4.0 * math.sqrt(420.0 / 100.0)
+    _s, ee, se, lam = capacidad.dhakal_maekawa(e, sl, fy, Es, 4.0, alfa)
+    check(abs(lam - lam_mano) < 1e-12 and abs(ee / ey - (55 - 2.3 * lam_mano)) < 1e-9
+          and abs(se / np.interp(ee, e, sl) - (1.1 - 0.016 * lam_mano)) < 1e-9,
+          'L/D 4, fy 420 MPa: lambda = 4 raiz(4.2) = %.4f, eps*/eps_y = 55 - 2.3 lambda = %.3f, '
+          'sig*/sig_l* = 1.1 - 0.016 lambda = %.4f' % (lam, ee / ey, se / np.interp(ee, e, sl)))
+    _s, ee30, se30, _l = capacidad.dhakal_maekawa(e, sl, fy, Es, 30.0, alfa)
+    check(abs(ee30 / ey - 7.0) < 1e-12 and abs(se30 - 0.2 * fy) < 1e-9,
+          'los topes: con L/D 30 eps* = 7 eps_y y sig* = 0.2 fy')
+
+    print('\n[2] OpenSees ReinforcingSteel -DMBuck = el paper hasta eps*')
+    for n in p['separaciones_de_estribo']:
+        L_D = 4.0 * n
+        _e, so = capacidad.curva_de_barra(a, L_D, alfa, n=4001)
+        sd, ee, se, lam = capacidad.dhakal_maekawa(e, sl, fy, Es, L_D, alfa)
+        m = e <= ee
+        d = np.abs(so[m] - sd[m]) / fy
+        i = int(np.argmax(d))
+        # la pendiente de 1 - sig/sig_l contra (eps - eps_y), en el tramo de la ec. (1)
+        t = (e > 0.012) & (e < 0.8 * ee)
+        k_os = np.polyfit(e[t] - ey, 1 - so[t] / sl[t], 1)[0]
+        k_pa = (1 - se / np.interp(ee, e, sl)) / (ee - ey)
+        check(d[i] <= TOL_DM_OPENSEES and abs(k_os / k_pa - 1) <= TOL_DM_PENDIENTE,
+              'L/D %.0f (lambda %.2f, eps* %.4f): |OpenSees - paper| <= %.0f %% de fy y la misma pendiente'
+              % (L_D, lam, ee, 100 * TOL_DM_OPENSEES),
+              'peor %.2f %% de fy en eps %.4f; pendiente %.3f contra %.3f del paper'
+              % (100 * d[i], e[m][i], k_os, k_pa))
+
+    print('\n[3] OpenSees no depende de las unidades, solo de eps_y')
+    L_D = 8.0
+    _e, s_kpa = capacidad.curva_de_barra(a, L_D, alfa, n=1201)
+    en_mpa = dict(a, fy_MPa=a['fy_MPa'] / 1e3, fu_MPa=a['fu_MPa'] / 1e3, Es_MPa=a['Es_MPa'] / 1e3,
+                  Esh_MPa=a['Esh_MPa'] / 1e3)                  # los mismos numeros en MPa
+    _e, s_mpa = capacidad.curva_de_barra(en_mpa, L_D, alfa, n=1201)
+    check(np.max(np.abs(s_kpa / fy - s_mpa * 1e3 / fy)) < 1e-12,
+          'en kPa y en MPa da la misma curva normalizada (no hay trampa de unidades)')
+    otro = dict(a, fy_MPa=a['fy_MPa'] / 2, fu_MPa=a['fu_MPa'] / 2, Es_MPa=a['Es_MPa'] / 2,
+                Esh_MPa=a['Esh_MPa'] / 2)                     # misma eps_y, fy a la mitad
+    _e, s_mitad = capacidad.curva_de_barra(otro, L_D, alfa, n=1201)
+    igual = np.max(np.abs(s_kpa / fy - s_mitad / (fy / 2))) < 1e-12
+    check(igual and abs(a['Es_MPa'] - 200000.0) < 1e-9,
+          'OpenSees toma raiz(fy/100) por eps_y (fy a la mitad con la misma eps_y da lo mismo): '
+          'coincide con el paper porque Es = 200 GPa')
+
+    print('\n[4] la columna 200037: el pandeo solo resta, y no cambia el Mn nominal')
+    modelo = _ed.estructura()
+    sec = capacidad.desde_elemento(modelo, COLUMNA)
+    P = 0.30 * sec.P_compresion
+    with contextlib.redirect_stderr(io.StringIO()):
+        sin = capacidad.momento_curvatura(capacidad.con_acero(sec, a), P=P)
+        con = {n: capacidad.momento_curvatura(capacidad.con_acero(sec, a, capacidad.esbeltez(sec, n)[0], alfa), P=P)
+               for n in p['separaciones_de_estribo']}
+    eps_cu = sec.confinamiento()['eps_cu']
+    for n, r in con.items():
+        L_D = capacidad.esbeltez(sec, n)[0]
+        k = min(len(r['M']), len(sin['M']))
+        sobra = max(r['M'][i] - sin['M'][i] for i in range(k))
+        # Cota del Mn: la ec. (1) a la deformacion de 0.003 baja el acero
+        # comprimido a lo mas en (1 - sig*/sig_l*)(0.003 - eps_y)/(eps* - eps_y).
+        _s, ee, se, _l = capacidad.dhakal_maekawa(e, sl, fy, Es, L_D, alfa)
+        cota = (1 - se / np.interp(ee, e, sl)) * max(capacidad.EPS_C_ACI - ey, 0) / (ee - ey)
+        dmn = abs(r['M_aci'] - sin['M_aci']) / sin['M_aci']
+        check(sobra <= 1e-6 * sin['M_max'] and dmn <= cota,
+              'L = %d s (L/D %.2f): M con pandeo <= sin pandeo en cada paso; Mn cambia %.4f %% (cota %.4f %%)'
+              % (n, L_D, 100 * dmn, 100 * cota),
+              'M max %.1f contra %.1f kN m (%+.2f %%); eps* %.4f, el M-phi termina en eps_cu %.4f'
+              % (r['M_max'], sin['M_max'], 100 * (r['M_max'] / sin['M_max'] - 1), ee, eps_cu))
+    L_D1 = capacidad.esbeltez(sec, 1)[0]
+    _s, ee1, _se, lam1 = capacidad.dhakal_maekawa(e, sl, fy, Es, L_D1, alfa)
+    r1 = con[1]
+    check(calza(round(L_D1, 2), 'pandeo_200037', 'L_D') and calza(round(lam1, 2), 'pandeo_200037', 'lambda')
+          and calza(round(ee1, 4), 'pandeo_200037', 'eps_estrella')
+          and calza(round(eps_cu, 4), 'pandeo_200037', 'eps_cu_nucleo')
+          and calza(round(sin['M_max'], 1), 'pandeo_200037', 'M_max_sin_kNm')
+          and calza(round(r1['M_max'], 1), 'pandeo_200037', 'M_max_DM_s_kNm')
+          and calza(round(con[2]['M_max'], 1), 'pandeo_200037', 'M_max_DM_2s_kNm'),
+          'L/D %.2f, lambda %.2f, eps* %.4f > eps_cu %.4f; M max %.1f / %.1f / %.1f kN m: los numeros de control'
+          % (L_D1, lam1, ee1, eps_cu, sin['M_max'], r1['M_max'], con[2]['M_max']))
+    print('         (no cambia ninguna curva del programa: el acero del programa sigue siendo Steel01)')
+
+
+# ============================================================
 def main(argv=None):
     ap = argparse.ArgumentParser(prog='python -m verificacion.capacidad',
                                  description='Capacidad de las secciones: fibras, a mano, demanda, '
                                              'nucleos y losa colaborante')
     ap.add_argument('bloques', nargs='*', metavar='bloque',
-                    help='%s (sin bloque: los cinco)' % ', '.join(BLOQUES))
+                    help='%s (sin bloque: los seis)' % ', '.join(BLOQUES))
     ap.add_argument('--elementos', nargs='+', default=[], metavar='ELEM',
                     help='rc_a_mano: los elementos a revisar (por defecto la primera columna '
                          'y el primer muro con fierro de cada cuerpo)')
@@ -968,7 +1080,7 @@ def main(argv=None):
     if malos:
         ap.error('bloque desconocido: %s (son: %s)' % (', '.join(malos), ', '.join(BLOQUES)))
     hacer = {'mphi_pm': mphi_pm, 'rc_a_mano': rc_a_mano, 'demanda_todas': demanda_todas,
-             'nucleos': nucleos, 'losa_colaborante': losa_colaborante}
+             'nucleos': nucleos, 'losa_colaborante': losa_colaborante, 'pandeo': pandeo}
     consola_tolerante()
     t0 = time.time()
     inf = Informe()

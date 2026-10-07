@@ -6,7 +6,7 @@
 > servidor y la AR, en `CONTRATO.md`; acá van las reglas, las convenciones
 > y las trampas que ya costaron tiempo.
 >
-> **La suite es `python sap.py verificar`** (42 entradas; `--rapido` deja
+> **La suite es `python sap.py verificar`** (43 entradas; `--rapido` deja
 > fuera las 6 lentas). Toda trampa de la sección 6 nombra la entrada que la
 > vigila por su etiqueta, tal como la imprime `python sap.py verificar --lista`.
 >
@@ -219,7 +219,7 @@ la firma de familia P-M; `demanda()` sin default en muros; el cierre al filo
 ## 8. Cómo saber si está todo bien
 
 ```powershell
-python sap.py verificar            # la suite entera (42)
+python sap.py verificar            # la suite entera (43)
 python sap.py verificar --rapido   # sin las 6 lentas (36)
 python sap.py revisar qa           # la tabla de QA de 10 filas
 ```
@@ -243,6 +243,7 @@ que lo explica. Los principales:
 | laboratorio | A = 6894.5944 m², Q = 20683.7833 kN, V = 10907.0752 kN; 15 casos; escala ×160; columna demo 200005, muro demo 100537; 207 elementos con fierro; NO PASA 7 en S3 y 14 en 0.9G-1.4EX; peor cierre 0.9999999995 | L2, R1 |
 | superposición | E1 9.6322 mm (0 NO PASA), E2 12.3262 mm (0), E3 25.1115 mm (9 NO PASA, 3 fuera de curva), de 207 | R4 |
 | columna 200037 | Mn(P = 0) 1190.2 kN·m; nariz de la P-M en P = 4186 kN, M = 1762 kN·m | C1 |
+| pandeo 200037 (Honors) | Dhakal-Maekawa: L/D 4.00, λ 8.20, ε* 0.0759 > ε_cu 0.0279; M max (P = 0.30 P0) 2212.9 sin pandeo, 2212.1 con L = s, 2204.7 con L = 2s kN·m | C6 |
 | demanda G + Q | 54 familias, 207 elementos con fierro; la más exigida 100080, u = 0.560 | C3 |
 | núcleos | 50 patas, 15 grupos, 735 filas de pata | C4 |
 | benchmark | UZ techo = -0.06348 mm | M1 |
