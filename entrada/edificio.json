@@ -10598,6 +10598,101 @@
     0
    ],
    "auxiliar": true
+  },
+  {
+   "id": 100719,
+   "x": 25.52,
+   "y": 47.7,
+   "z": -4.01,
+   "fijo": false,
+   "auxiliar": false,
+   "restricciones": [
+    0,
+    0,
+    1,
+    1,
+    1,
+    0
+   ],
+   "rx": 0.0,
+   "ry": 0.0,
+   "rz": 0.0
+  },
+  {
+   "id": 100720,
+   "x": 18.02,
+   "y": 43.83,
+   "z": -0.05,
+   "fijo": false,
+   "auxiliar": false,
+   "restricciones": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "rx": 0.0,
+   "ry": 0.0,
+   "rz": 0.0
+  },
+  {
+   "id": 100721,
+   "x": 25.52,
+   "y": 43.83,
+   "z": -0.05,
+   "fijo": false,
+   "auxiliar": false,
+   "restricciones": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "rx": 0.0,
+   "ry": 0.0,
+   "rz": 0.0
+  },
+  {
+   "id": 100722,
+   "x": 18.02,
+   "y": 43.83,
+   "z": 3.91,
+   "fijo": false,
+   "auxiliar": false,
+   "restricciones": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "rx": 0.0,
+   "ry": 0.0,
+   "rz": 0.0
+  },
+  {
+   "id": 100723,
+   "x": 25.52,
+   "y": 43.83,
+   "z": 3.91,
+   "fijo": false,
+   "auxiliar": false,
+   "restricciones": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "rx": 0.0,
+   "ry": 0.0,
+   "rz": 0.0
   }
  ],
  "elementos": [
@@ -15960,10 +16055,10 @@
   {
    "id": 100103,
    "n1": 100142,
-   "n2": 100156,
+   "n2": 100719,
    "seccion": "ingenieria:viga_x",
    "tipo": "viga_x",
-   "area_tributaria": 6.25,
+   "area_tributaria": 3.125,
    "w_gravedad": 21.6875
   },
   {
@@ -16215,8 +16310,8 @@
    "n2": 100247,
    "seccion": "ingenieria:viga_x",
    "tipo": "viga_x",
-   "area_tributaria": 6.25,
-   "w_gravedad": 21.6875
+   "area_tributaria": 14.0529,
+   "w_gravedad": 33.782
   },
   {
    "id": 100132,
@@ -16242,8 +16337,8 @@
    "n2": 100254,
    "seccion": "ingenieria:viga_x",
    "tipo": "viga_x",
-   "area_tributaria": 1.5625,
-   "w_gravedad": 16.8438
+   "area_tributaria": 4.5279,
+   "w_gravedad": 26.0365
   },
   {
    "id": 100135,
@@ -16485,8 +16580,8 @@
    "n2": 100352,
    "seccion": "ingenieria:viga_x",
    "tipo": "viga_x",
-   "area_tributaria": 6.25,
-   "w_gravedad": 21.6875
+   "area_tributaria": 14.0529,
+   "w_gravedad": 33.782
   },
   {
    "id": 100162,
@@ -16512,8 +16607,8 @@
    "n2": 100359,
    "seccion": "ingenieria:viga_x",
    "tipo": "viga_x",
-   "area_tributaria": 1.5625,
-   "w_gravedad": 16.8438
+   "area_tributaria": 4.5279,
+   "w_gravedad": 26.0365
   },
   {
    "id": 100165,
@@ -41309,6 +41404,123 @@
    "largo": 0.0,
    "espesor": 0.0,
    "area_tributaria": 4.205947
+  },
+  {
+   "id": 100560,
+   "n1": 100719,
+   "n2": 100156,
+   "seccion": "ingenieria:viga_x",
+   "tipo": "viga_x",
+   "area_tributaria": 3.125,
+   "w_gravedad": 21.6875
+  },
+  {
+   "id": 100561,
+   "n1": 100719,
+   "n2": 100254,
+   "seccion": "ingenieria:pilar_metal",
+   "tipo": "pilar_metal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
+  },
+  {
+   "id": 100562,
+   "n1": 100254,
+   "n2": 100359,
+   "seccion": "ingenieria:pilar_metal",
+   "tipo": "pilar_metal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
+  },
+  {
+   "id": 100563,
+   "n1": 100720,
+   "n2": 100721,
+   "seccion": "ingenieria:viga_x",
+   "tipo": "viga_x",
+   "area_tributaria": 10.7683,
+   "w_gravedad": 23.1272
+  },
+  {
+   "id": 100564,
+   "n1": 100720,
+   "n2": 100233,
+   "seccion": "ingenieria:viga_y",
+   "tipo": "viga_y",
+   "area_tributaria": 3.7442,
+   "w_gravedad": 19.4981
+  },
+  {
+   "id": 100565,
+   "n1": 100721,
+   "n2": 100254,
+   "seccion": "ingenieria:viga_y",
+   "tipo": "viga_y",
+   "area_tributaria": 3.7442,
+   "w_gravedad": 19.4981
+  },
+  {
+   "id": 100566,
+   "n1": 100722,
+   "n2": 100723,
+   "seccion": "ingenieria:viga_x",
+   "tipo": "viga_x",
+   "area_tributaria": 10.7683,
+   "w_gravedad": 23.1272
+  },
+  {
+   "id": 100567,
+   "n1": 100722,
+   "n2": 100338,
+   "seccion": "ingenieria:viga_y",
+   "tipo": "viga_y",
+   "area_tributaria": 3.7442,
+   "w_gravedad": 19.4981
+  },
+  {
+   "id": 100568,
+   "n1": 100723,
+   "n2": 100359,
+   "seccion": "ingenieria:viga_y",
+   "tipo": "viga_y",
+   "area_tributaria": 3.7442,
+   "w_gravedad": 19.4981
+  },
+  {
+   "id": 100569,
+   "n1": 100720,
+   "n2": 100722,
+   "seccion": "ingenieria:pilar_metal",
+   "tipo": "pilar_metal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
+  },
+  {
+   "id": 100570,
+   "n1": 100721,
+   "n2": 100723,
+   "seccion": "ingenieria:pilar_metal",
+   "tipo": "pilar_metal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
+  },
+  {
+   "id": 100571,
+   "n1": 100720,
+   "n2": 100338,
+   "seccion": "ingenieria:diagonal_metal",
+   "tipo": "diagonal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
+  },
+  {
+   "id": 100572,
+   "n1": 100254,
+   "n2": 100723,
+   "seccion": "ingenieria:diagonal_metal",
+   "tipo": "diagonal",
+   "area_tributaria": 0.0,
+   "w_gravedad": 0.0
   }
  ],
  "diafragmas": [
@@ -41387,7 +41599,8 @@
     100706,
     100708,
     100710,
-    100712
+    100712,
+    100719
    ],
    "perpendicular": 3
   },
@@ -41451,7 +41664,9 @@
     100707,
     100709,
     100711,
-    100713
+    100713,
+    100720,
+    100721
    ],
    "perpendicular": 3
   },
@@ -41506,7 +41721,9 @@
     100681,
     100687,
     100693,
-    100699
+    100699,
+    100722,
+    100723
    ],
    "perpendicular": 3
   },
@@ -43562,6 +43779,34 @@
      "mx": 0.0,
      "my": 0.0,
      "mz": 0.0
+    },
+    {
+     "nodo": 100719,
+     "fz": -3.481632
+    },
+    {
+     "nodo": 100254,
+     "fz": -6.963264
+    },
+    {
+     "nodo": 100359,
+     "fz": -3.481632
+    },
+    {
+     "nodo": 100720,
+     "fz": -3.481632
+    },
+    {
+     "nodo": 100722,
+     "fz": -3.481632
+    },
+    {
+     "nodo": 100721,
+     "fz": -3.481632
+    },
+    {
+     "nodo": 100723,
+     "fz": -3.481632
     }
    ],
    "cargas_distribuidas": [
@@ -43988,7 +44233,7 @@
     {
      "elemento": 100131,
      "wy": 0.0,
-     "wz": -21.6875,
+     "wz": -33.782,
      "wx": 0.0
     },
     {
@@ -44006,7 +44251,7 @@
     {
      "elemento": 100134,
      "wy": 0.0,
-     "wz": -16.84375,
+     "wz": -26.0365,
      "wx": 0.0
     },
     {
@@ -44312,7 +44557,7 @@
     {
      "elemento": 100161,
      "wy": 0.0,
-     "wz": -21.6875,
+     "wz": -33.782,
      "wx": 0.0
     },
     {
@@ -44330,7 +44575,7 @@
     {
      "elemento": 100164,
      "wy": 0.0,
-     "wz": -16.84375,
+     "wz": -26.0365,
      "wx": 0.0
     },
     {
@@ -46690,6 +46935,48 @@
      "wy": 0.0,
      "wz": -18.163743,
      "wx": 0.0
+    },
+    {
+     "elemento": 100560,
+     "wy": 0.0,
+     "wz": -21.6875,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100563,
+     "wy": 0.0,
+     "wz": -23.1272,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100564,
+     "wy": 0.0,
+     "wz": -19.4981,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100565,
+     "wy": 0.0,
+     "wz": -19.4981,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100566,
+     "wy": 0.0,
+     "wz": -23.1272,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100567,
+     "wy": 0.0,
+     "wz": -19.4981,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100568,
+     "wy": 0.0,
+     "wz": -19.4981,
+     "wx": 0.0
     }
    ]
   },
@@ -47473,7 +47760,7 @@
     {
      "elemento": 100131,
      "wy": 0.0,
-     "wz": -2.5,
+     "wz": -5.62116,
      "wx": 0.0
     },
     {
@@ -47491,7 +47778,7 @@
     {
      "elemento": 100134,
      "wy": 0.0,
-     "wz": -1.25,
+     "wz": -3.62232,
      "wx": 0.0
     },
     {
@@ -47797,7 +48084,7 @@
     {
      "elemento": 100161,
      "wy": 0.0,
-     "wz": -2.5,
+     "wz": -5.62116,
      "wx": 0.0
     },
     {
@@ -47815,7 +48102,7 @@
     {
      "elemento": 100164,
      "wy": 0.0,
-     "wz": -1.25,
+     "wz": -3.62232,
      "wx": 0.0
     },
     {
@@ -50079,6 +50366,48 @@
      "wy": 0.0,
      "wz": -9.356427,
      "wx": 0.0
+    },
+    {
+     "elemento": 100560,
+     "wy": 0.0,
+     "wz": -2.5,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100563,
+     "wy": 0.0,
+     "wz": -2.871547,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100564,
+     "wy": 0.0,
+     "wz": -1.934987,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100565,
+     "wy": 0.0,
+     "wz": -1.934987,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100566,
+     "wy": 0.0,
+     "wz": -2.871547,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100567,
+     "wy": 0.0,
+     "wz": -1.934987,
+     "wx": 0.0
+    },
+    {
+     "elemento": 100568,
+     "wy": 0.0,
+     "wz": -1.934987,
+     "wx": 0.0
     }
    ]
   },
@@ -50088,23 +50417,23 @@
    "cargas_nodales": [
     {
      "nodo": 100714,
-     "fx": 593.6608
+     "fx": 594.601
     },
     {
      "nodo": 100715,
-     "fx": 794.5019
+     "fx": 824.3907
     },
     {
      "nodo": 100716,
-     "fx": 1104.2185
+     "fx": 1148.9131
     },
     {
      "nodo": 100717,
-     "fx": 1768.0778
+     "fx": 1770.8781
     },
     {
      "nodo": 100718,
-     "fx": 2046.2632
+     "fx": 2049.5041
     },
     {
      "nodo": 200228,
@@ -50160,23 +50489,23 @@
    "cargas_nodales": [
     {
      "nodo": 100714,
-     "fy": 593.6608
+     "fy": 594.601
     },
     {
      "nodo": 100715,
-     "fy": 794.5019
+     "fy": 824.3907
     },
     {
      "nodo": 100716,
-     "fy": 1104.2185
+     "fy": 1148.9131
     },
     {
      "nodo": 100717,
-     "fy": 1768.0778
+     "fy": 1770.8781
     },
     {
      "nodo": 100718,
-     "fy": 2046.2632
+     "fy": 2049.5041
     },
     {
      "nodo": 200228,
@@ -50687,7 +51016,7 @@
    {
     "elemento": 100103,
     "forma": "triangulo",
-    "area": 6.25,
+    "area": 3.125,
     "z": -4.01,
     "vertices": [
      {
@@ -50695,7 +51024,7 @@
       "y": 47.7
      },
      {
-      "x": 28.02,
+      "x": 25.52,
       "y": 47.7
      },
      {
@@ -73305,6 +73634,294 @@
      3
     ],
     "n_poligonos": 2
+   },
+   {
+    "elemento": 100560,
+    "forma": "triangulo",
+    "area": 3.125,
+    "z": -4.01,
+    "vertices": [
+     {
+      "x": 25.52,
+      "y": 47.7
+     },
+     {
+      "x": 28.02,
+      "y": 47.7
+     },
+     {
+      "x": 25.52,
+      "y": 50.2
+     }
+    ],
+    "tamanos": [
+     3
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100563,
+    "forma": "trapecio",
+    "area": 10.7683,
+    "z": -0.05,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 43.83
+     },
+     {
+      "x": 25.52,
+      "y": 43.83
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100564,
+    "forma": "triangulo",
+    "area": 3.7442,
+    "z": -0.05,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 43.83
+     },
+     {
+      "x": 18.02,
+      "y": 47.7
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     3
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100565,
+    "forma": "triangulo",
+    "area": 3.7442,
+    "z": -0.05,
+    "vertices": [
+     {
+      "x": 25.52,
+      "y": 43.83
+     },
+     {
+      "x": 25.52,
+      "y": 47.7
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     3
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100131,
+    "forma": "trapecio",
+    "area": 7.8029,
+    "z": -0.05,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 47.7
+     },
+     {
+      "x": 23.02,
+      "y": 47.7
+     },
+     {
+      "x": 23.02,
+      "y": 45.765
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100134,
+    "forma": "trapecio",
+    "area": 2.9654,
+    "z": -0.05,
+    "vertices": [
+     {
+      "x": 23.02,
+      "y": 47.7
+     },
+     {
+      "x": 25.52,
+      "y": 47.7
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     },
+     {
+      "x": 23.02,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100566,
+    "forma": "trapecio",
+    "area": 10.7683,
+    "z": 3.91,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 43.83
+     },
+     {
+      "x": 25.52,
+      "y": 43.83
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100567,
+    "forma": "triangulo",
+    "area": 3.7442,
+    "z": 3.91,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 43.83
+     },
+     {
+      "x": 18.02,
+      "y": 47.7
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     3
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100568,
+    "forma": "triangulo",
+    "area": 3.7442,
+    "z": 3.91,
+    "vertices": [
+     {
+      "x": 25.52,
+      "y": 43.83
+     },
+     {
+      "x": 25.52,
+      "y": 47.7
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     3
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100161,
+    "forma": "trapecio",
+    "area": 7.8029,
+    "z": 3.91,
+    "vertices": [
+     {
+      "x": 18.02,
+      "y": 47.7
+     },
+     {
+      "x": 23.02,
+      "y": 47.7
+     },
+     {
+      "x": 23.02,
+      "y": 45.765
+     },
+     {
+      "x": 19.955,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
+   },
+   {
+    "elemento": 100164,
+    "forma": "trapecio",
+    "area": 2.9654,
+    "z": 3.91,
+    "vertices": [
+     {
+      "x": 23.02,
+      "y": 47.7
+     },
+     {
+      "x": 25.52,
+      "y": 47.7
+     },
+     {
+      "x": 23.585,
+      "y": 45.765
+     },
+     {
+      "x": 23.02,
+      "y": 45.765
+     }
+    ],
+    "tamanos": [
+     4
+    ],
+    "n_poligonos": 1
    }
   ]
  },
@@ -74313,6 +74930,41 @@
     "_diagonal_DM": "D.M. del voladizo sur (lamina 2017_67-306): barras redondas; el diametro no se leyo y se supone fi 32 (SUPUESTO)",
     "brazo_rigido_factor": 100.0,
     "_brazo_rigido": "brazos de muro = barra de la columna x 100 (no rigidLink, que pelea con el diafragma); hasta 4.0 m"
+   },
+   "balcon_poniente": {
+    "_que_es": [
+     "BALCON PONIENTE DEL CUERPO ANTIGUO (agregado el 06-10-2026).",
+     "Se habia pasado desde la primera semana. Es una copia del balcon que ya estaba",
+     "(x 28.02-38.02, pisos 7.87 y 11.83): el mismo fondo de 3.87 m, vigas de hormigon",
+     "viga_x / viga_y, pilares P.M. 300x300x20 en el borde y diagonal D.M. fi 32."
+    ],
+    "origen": "indicado por el grupo: mismas dimensiones que el balcon existente; no se midio en una lamina",
+    "_supuesto": true,
+    "nodos": [
+     100719,
+     100720,
+     100721,
+     100722,
+     100723
+    ],
+    "elementos": [
+     100560,
+     100561,
+     100562,
+     100563,
+     100564,
+     100565,
+     100566,
+     100567,
+     100568,
+     100569,
+     100570,
+     100571,
+     100572
+    ],
+    "pilar_de_fachada": "x = 25.52: 100561 (-4.01 a -0.05) y 100562 (-0.05 a 3.91). Parte la viga 100103 en el nodo 100719, que es apoyo en terreno [0,0,1,1,1,0] y va en el diafragma de -4.01, igual que sus vecinos 100142 y 100156 (empotrado en flexion; la traslacion la da la losa, como en todo ese nivel).",
+    "diagonales": "100571 frente a 100233/100338, como 100558 (abajo afuera -> arriba en fachada); 100572 en x = 25.52, al reves (abajo en fachada -> arriba afuera)",
+    "cargas": "las del balcon existente: G = peso propio + 7.75 kPa por area tributaria, Q del modelo 2.0 kPa, acero solo los pilares (78.5 kN/m3, la mitad a cada nudo); el sismo del modelo se rehizo con su regla (0.10 sum W, W h)."
    }
   },
   "problemas_conocidos": [
@@ -74320,7 +74972,8 @@
    "El M 0.60x2.92 del LT2 quedo sin fierro, y 11 muros del LT2 no traen enfierradura (200010, 200011, 200013, 200026, 200027, 200042, 200043, 200058, 200059, 200074, 200075): sin curva P-M no tienen D/C.",
    "La enfierradura del LT2 no trae acero ni recubrimiento: la capacidad usa 0.03 m y fy 420.",
    "\"L:3+3\" se leyo como barras de punta en Ingenieria, aunque la lamina 000 del LT2 dice que \"L:\" son laterales de viga (CLAUDE.md, trampas).",
-   "Los dos cuerpos traen casos de carga del MODELO distintos de los del laboratorio (entrada/laboratorio.json): solo G coincide. Ver CLAUDE.md, \"dos fuentes de casos\"."
+   "Los dos cuerpos traen casos de carga del MODELO distintos de los del laboratorio (entrada/laboratorio.json): solo G coincide. Ver CLAUDE.md, \"dos fuentes de casos\".",
+   "El balcon poniente del cuerpo antiguo (supuestos.ingenieria.balcon_poniente) es una copia del balcon existente, indicada por el grupo; sus medidas no se leyeron de una lamina."
   ]
  }
 }

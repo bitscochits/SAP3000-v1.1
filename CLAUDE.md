@@ -154,7 +154,7 @@ de `verificacion/suite.py`; se corre sola con
 
 | Trampa | Guardia |
 |---|---|
-| **Dos fuentes de casos.** El modelo trae sus propios G, Q, EX, EY (`casos_de_carga`, los que resuelven `calcular` y `/analizar`); el laboratorio arma los suyos con q de NCh1537 y el Cs de `laboratorio.json` (los de `resultados.json`, E1..E3, LIBRE, INSTANT, la AR y el Excel). **Solo G coincide**: Q 20002.3025 contra 20509.6333 kN; corte basal 9939.7852 contra 10814.0177 kN. Comparar un número de una fuente con uno de la otra da una "diferencia" que no es error. Se conservan las dos con nombre y no se unifican sin una decisión | `M3 motor: reanalisis = modelo` (`/analizar` = los casos del modelo), `L2 laboratorio: Partes A, B y C` (V = 10814.0177), `L3 laboratorio: sismo del modelo` (9939.7852), `L5 laboratorio: M2 cs 0.20` (G de `/analizar` = G del laboratorio) |
+| **Dos fuentes de casos.** El modelo trae sus propios G, Q, EX, EY (`casos_de_carga`, los que resuelven `calcular` y `/analizar`); el laboratorio arma los suyos con q de NCh1537 y el Cs de `laboratorio.json` (los de `resultados.json`, E1..E3, LIBRE, INSTANT, la AR y el Excel). **Solo G coincide**: Q 20118.4025 contra 20683.7833 kN; corte basal 10021.3500 contra 10907.0752 kN. Comparar un número de una fuente con uno de la otra da una "diferencia" que no es error. Se conservan las dos con nombre y no se unifican sin una decisión | `M3 motor: reanalisis = modelo` (`/analizar` = los casos del modelo), `L2 laboratorio: Partes A, B y C` (V = 10907.0752), `L3 laboratorio: sismo del modelo` (10021.3500), `L5 laboratorio: M2 cs 0.20` (G de `/analizar` = G del laboratorio) |
 | **`JsonUtility` ignora sin avisar** un campo C# que no calza con el JSON: deformada plana, diagrama vacío, sin error. Tampoco lee arreglos anidados, diccionarios ni propiedades | `U1 unity: contrato JSON <-> C#` (las dos direcciones, tipos, anidados; FALLA si falta un `.cs` o una clase), `U4 unity: JsonUtility real` (Unity en batch lee los 5 JSON y los vuelve a escribir) |
 | **Un paño de losa que nunca entró al modelo no rompe el equilibrio**: la carga que no se aplicó tampoco se reacciona | `E3 edificio: losa aplicada = dibujada` (área sellada = polígonos = carga, con el q implícito constante por piso, por cuerpo) |
 | **Dos secciones con el mismo número de barras no son la misma sección** (caché de curvas P-M) | `C3 capacidad: demanda --todas` (la firma de familia, `calculo.demanda.firma_de_seccion`: sección, b, h, barras, As, estribo, malla) |
@@ -176,7 +176,7 @@ de `verificacion/suite.py`; se corre sola con
 | **Una dimensión escrita como constante en el código no se parece a un supuesto, y nadie la revisa.** El pilar del cuerpo antiguo vivía como `0.50 x 0.50` en el código, sin origen; la lámina 2017_67-103 lo rotula `P. 70x70`. El cuerpo salía mucho más flexible, eso explicaba casi la mitad de los NO PASA, y el equilibrio cerraba igual. Las secciones viven en `edificio.json` con su `origen` o su `_supuesto`, y se leen **sin default**: si falta una, el `KeyError` dice cuál | `E1 edificio: dato` (lo supuesto declarado es lo usado) |
 | **La superposición SÍ se suma en C#, y es a propósito** (INSTANT, sección 2). Dos errores que no daban ningún número malo: interpolar por la `x` de la estación (viene redondeada a 4 decimales) en vez de por **fracción de índice**, y registrar el caso como `"combinacion"`, que el hook solo reemplaza si es `"superposicion"`: el primer movimiento andaba y los siguientes quedaban congelados | `R5 resultados: sliders instantaneos (replica)` (el algoritmo en float32 sobre 10 juegos de λ), `K1 capturas: visor` (lo que la app escribió, con la versión del caso subiendo en cada movimiento) |
 | **La deformada de la persona también se suma en C#, con la misma licencia, y una flecha que no está en ningún nodo no se ve.** Aplicar la deformada redibuja, y pedirla al redibujar la pedía en cada cuadro: se pide al **moverse** y se aplica a lo más cada 0.08 s. La flecha local dentro de la viga cargada entra al dibujo por `VisorEstructura.FlechaEnVano`, que vale cero si la deformada dibujada no es la de la persona | `P2 persona: suma = OpenSees`, `U2 unity: transcripciones C# = elastica.py`, `K2 capturas: persona` (lo que la app sumó = OpenSees) |
-| **El relieve de Google Earth no trae cotas, y el JSON del visor no dice de qué edificio es.** Un trazo "pegado al suelo" se guarda con `z = 0`: las cotas salen del DEM Copernicus GLO-30, calzado en vertical con los 84 apoyos en terreno. `modelo.json` no trae `info.edificio`: el relieve trae la **huella** del modelo (`info.n_nodos`, `info.n_elementos`) y el visor la compara al cargar | `P3 relieve del sitio` (el techo de la foto calza con el del modelo, el terreno sube hacia +x como las terrazas, cada apoyo dentro del DEM), `K3 capturas: relieve` |
+| **El relieve de Google Earth no trae cotas, y el JSON del visor no dice de qué edificio es.** Un trazo "pegado al suelo" se guarda con `z = 0`: las cotas salen del DEM Copernicus GLO-30, calzado en vertical con los 85 apoyos en terreno. `modelo.json` no trae `info.edificio`: el relieve trae la **huella** del modelo (`info.n_nodos`, `info.n_elementos`) y el visor la compara al cargar | `P3 relieve del sitio` (el techo de la foto calza con el del modelo, el terreno sube hacia +x como las terrazas, cada apoyo dentro del DEM), `K3 capturas: relieve` |
 | **Una textura real en la vista realista falla en silencio de tres maneras**: un material creado con `new Material` y `_NORMALMAP` sale **plano en el exe** (la build borra las variantes que ningún asset usa); un mapa normal sobre una malla **sin tangentes** deja negras las caras no horizontales; el albedo de un hormigón real es un tercio del de las texturas procedurales. Los materiales y el cielo son **assets** en `Resources/Ambiente`, todo constructor de malla hace `RecalculateTangents()`, y un ruido de periodo corto arma **otra** grilla | `H1 vista realista: recursos` (licencias CC0, normales como `NormalMap`, `_NORMALMAP` por GUID, `_DETAIL_MULX2`, el sol del HDRI en el rumbo de la luz) |
 
 ## 7. Reglas para el agente
@@ -232,21 +232,21 @@ que lo explica. Los principales:
 
 | | valor | lo mide |
 |---|---|---|
-| edificio | 558 nodos, 937 elementos, 47 secciones (44 de hormigón), 10 diafragmas, 4 casos del modelo | E1, E2 |
-| por cuerpo | antiguo 326 nodos / 559 elementos; LT2 232 / 378 | E1 |
-| G | 97885.3604 kN = 63736.3812 (antiguo) + 34148.9792 (LT2) | E1, M1 |
+| edificio | 563 nodos, 950 elementos, 47 secciones (44 de hormigón), 10 diafragmas, 4 casos del modelo | E1, E2 |
+| por cuerpo | antiguo 331 nodos / 572 elementos; LT2 232 / 378 | E1 |
+| G | 98728.8608 kN = 64579.8816 (antiguo) + 34148.9792 (LT2) | E1, M1 |
 | junta | 0.050 m | E2 |
-| casos del modelo | Q 20002.3025 kN; EX = EY 9939.7852 kN (6306.7222 + 3633.0630); mayor componente G 7.5874, Q 2.9052, EX 16.4151, EY 16.8000 mm | M2, L3 |
+| casos del modelo | Q 20118.4025 kN; EX = EY 10021.3500 kN (6388.2870 + 3633.0630); mayor componente G 7.5488, Q 2.9052, EX 16.4151, EY 16.8064 mm | M2, L3 |
 | terreno | base -7.97 con 45 apoyos; terraza -4.01 con 39 | U1, E1 |
-| tributarias | 544 elementos con losa, 6836.54 m² | E3 |
-| derivas (NCh433) | LT2 EX 1/1011, EY 1/1659 (cota 3.91); antiguo EX 1/2189, EY 1/895 (cota 7.87) | E4 |
-| laboratorio | A = 6836.5444 m², Q = 20509.6333 kN, V = 10814.0177 kN; 15 casos; escala ×160; columna demo 200005, muro demo 100537; 207 elementos con fierro; NO PASA 7 en S3 y 13 en 0.9G-1.4EX; peor cierre 0.9999999995 | L2, R1 |
-| superposición | E1 9.6336 mm (0 NO PASA), E2 12.3288 mm (0), E3 25.0876 mm (9 NO PASA, 3 fuera de curva), de 207 | R4 |
+| tributarias | 551 elementos con losa, 6894.59 m² | E3 |
+| derivas (NCh433) | LT2 EX 1/1011, EY 1/1659 (cota 3.91); antiguo EX 1/2188, EY 1/895 (cota 7.87) | E4 |
+| laboratorio | A = 6894.5944 m², Q = 20683.7833 kN, V = 10907.0752 kN; 15 casos; escala ×160; columna demo 200005, muro demo 100537; 207 elementos con fierro; NO PASA 7 en S3 y 14 en 0.9G-1.4EX; peor cierre 0.9999999995 | L2, R1 |
+| superposición | E1 9.6322 mm (0 NO PASA), E2 12.3262 mm (0), E3 25.1115 mm (9 NO PASA, 3 fuera de curva), de 207 | R4 |
 | columna 200037 | Mn(P = 0) 1190.2 kN·m; nariz de la P-M en P = 4186 kN, M = 1762 kN·m | C1 |
-| demanda G + Q | 54 familias, 207 elementos con fierro; la más exigida 100080, u = 0.557 | C3 |
+| demanda G + Q | 54 familias, 207 elementos con fierro; la más exigida 100080, u = 0.560 | C3 |
 | núcleos | 50 patas, 15 grupos, 735 filas de pata | C4 |
 | benchmark | UZ techo = -0.06348 mm | M1 |
 | carga móvil | 30 posiciones, escala ×1600, máximo 0.9635 mm | P1 |
-| persona | 1098 casos, escala ×540; 100 kN a media viga 200141: uz -0.715 mm, M -123.53 kN·m bajo la carga | P2, K2 |
+| persona | 1113 casos, escala ×540; 100 kN a media viga 200141: uz -0.715 mm, M -123.53 kN·m bajo la carga | P2, K2 |
 | M1 | borrar la columna 200069: el nodo 200186 pasa de -3.64515 a -21.59875 mm bajo G | M4 |
 | AR | 21 elementos, 22 nodos, 23024 números idénticos a los resultados | A1 |

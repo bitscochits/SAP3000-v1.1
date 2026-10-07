@@ -1,7 +1,7 @@
 {
  "_que_es": "Lo que midio python -m verificacion.ar registro_y_tracking: [3b] la transformacion de ar.js contra la de Python y [4] el tracking con un video sintetico de pose conocida. Lo lee el bloque precision. No se regenera con sap.py preparar: se vuelve a medir corriendo ese bloque (necesita Chrome o Edge).",
  "_digitos": "distancia_m, error_mm, ancho_px, ejes_deg... van con los digitos con que [4] los informa (los que usa el presupuesto de precision); sin_redondear trae los de la corrida.",
- "medido": "2026-10-06T21:24:12",
+ "medido": "2026-10-06T22:51:03",
  "navegador": "chrome.exe",
  "fov_mindar_grados": 45.0,
  "video_px": [
@@ -37,10 +37,10 @@
    "ejes_deg": 1.1,
    "cota_deg": 2.7,
    "sin_redondear": {
-    "distancia_m": 0.4511480718636014,
-    "error_mm": 1.1480718636013854,
+    "distancia_m": 0.4511480718636011,
+    "error_mm": 1.1480718636011078,
     "ancho_px": 257.51611331979683,
-    "inclinacion_estimada_deg": 1.0926739449055294,
+    "inclinacion_estimada_deg": 1.0926739449056404,
     "ejes_deg": 1.0926739449057516
    },
    "ok": true
@@ -49,7 +49,7 @@
    "verdad_m": 0.55,
    "inclinacion_deg": 30.0,
    "giro_deg": 0.0,
-   "poses_publicadas": 8,
+   "poses_publicadas": 9,
    "detecta": true,
    "distancia_m": 0.551,
    "error_mm": 0.6,
@@ -81,11 +81,11 @@
    "ejes_deg": 0.9,
    "cota_deg": 3.6,
    "sin_redondear": {
-    "distancia_m": 0.5973581983833023,
-    "error_mm": 2.641801616697692,
+    "distancia_m": 0.5973581983833022,
+    "error_mm": 2.641801616697803,
     "ancho_px": 193.13708498984764,
-    "inclinacion_estimada_deg": 40.56112540400333,
-    "ejes_deg": 0.8888147062712323
+    "inclinacion_estimada_deg": 40.56112540400332,
+    "ejes_deg": 0.8888147062716424
    },
    "ok": true
   }

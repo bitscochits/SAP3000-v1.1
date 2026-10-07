@@ -8,8 +8,9 @@
   "se decide si el cambio es correcto y, si lo es, se cambia el numero aca, con el",
   "commit que lo explica.",
   "",
-  "Medidos el 06-10-2026 sobre el edificio (los dos cuerpos, 558 nodos y 937 elementos)",
-  "y comparados con los de v1.0, que dan lo mismo."
+  "Medidos el 06-10-2026 sobre el edificio (los dos cuerpos, 563 nodos y 950 elementos), despues",
+  "de agregar el balcon poniente del cuerpo antiguo (entrada/edificio.json, supuestos.ingenieria.balcon_poniente).",
+  "Antes del balcon eran los de v1.0 (558 nodos, 937 elementos, G = 97885.3604 kN)."
  ],
  "_como_se_lee": [
   "Los enteros son conteos y tags: se exigen exactos.",
@@ -21,58 +22,58 @@
  ],
  "edificio": {
   "_de_donde": "E1 (dato) y E2 (junta); los casos del modelo: M2 y L3. Los casos del MODELO (los de entrada/edificio.json, los que resuelve /analizar) no son los del laboratorio: solo G coincide.",
-  "nodos": 558,
-  "elementos": 937,
+  "nodos": 563,
+  "elementos": 950,
   "secciones": 47,
   "diafragmas": 10,
   "casos_del_modelo": 4,
   "secciones_de_hormigon": 44,
-  "nodos_por_cuerpo": {"ingenieria": 326, "lt2": 232},
-  "elementos_por_cuerpo": {"ingenieria": 559, "lt2": 378},
-  "G_kN": "97885.3604",
-  "G_por_cuerpo_kN": {"ingenieria": "63736.3812", "lt2": "34148.9792"},
-  "Q_del_modelo_kN": "20002.3025",
-  "EX_del_modelo_kN": "9939.7852",
-  "EY_del_modelo_kN": "9939.7852",
-  "V_del_modelo_por_cuerpo_kN": {"ingenieria": "6306.7222", "lt2": "3633.0630"},
-  "mayor_componente_mm": {"G": "7.5874", "Q": "2.9052", "EX": "16.4151", "EY": "16.8000"},
+  "nodos_por_cuerpo": {"ingenieria": 331, "lt2": 232},
+  "elementos_por_cuerpo": {"ingenieria": 572, "lt2": 378},
+  "G_kN": "98728.8608",
+  "G_por_cuerpo_kN": {"ingenieria": "64579.8816", "lt2": "34148.9792"},
+  "Q_del_modelo_kN": "20118.4025",
+  "EX_del_modelo_kN": "10021.3500",
+  "EY_del_modelo_kN": "10021.3500",
+  "V_del_modelo_por_cuerpo_kN": {"ingenieria": "6388.2870", "lt2": "3633.0630"},
+  "mayor_componente_mm": {"G": "7.5488", "Q": "2.9052", "EX": "16.4151", "EY": "16.8064"},
   "junta_m": "0.050"
  },
  "terreno": {
   "_de_donde": "U1 (cada apoyo no auxiliar sobre su nivel) y E1 (el terreno declarado es el dibujado)",
   "base": {"z": "-7.97", "apoyos": 45},
-  "terraza": {"z": "-4.01", "apoyos": 39}
+  "terraza": {"z": "-4.01", "apoyos": 40}
  },
  "tributarias": {
   "_de_donde": "E3",
-  "elementos_con_losa": 544,
-  "area_m2": "6836.54"
+  "elementos_con_losa": 551,
+  "area_m2": "6894.59"
  },
  "derivas": {
   "_de_donde": "E4: la mayor deriva de entrepiso de NCh433 5.9.2 en los maestros de cada cuerpo bajo el EX y el EY del modelo (1/n, y la cota del piso donde ocurre). Son las mismas que daba v1.0: las del LT2 con su verificacion del modelo del cuerpo, las del cuerpo antiguo con el mismo calculo sobre los resultados de v1.0.",
   "lt2": {"EX": 1011, "cota_EX": "3.91", "EY": 1659, "cota_EY": "3.91"},
-  "ingenieria": {"EX": 2189, "cota_EX": "7.87", "EY": 895, "cota_EY": "7.87"}
+  "ingenieria": {"EX": 2188, "cota_EX": "7.87", "EY": 895, "cota_EY": "7.87"}
  },
  "laboratorio": {
   "_de_donde": "L2 (Partes A, B y C) y R1 (resultados al dia). Los casos del LABORATORIO: q de NCh1537 y Cs de entrada/laboratorio.json.",
-  "area_tributaria_m2": "6836.5444",
-  "Q_kN": "20509.6333",
-  "V_kN": "10814.0177",
+  "area_tributaria_m2": "6894.5944",
+  "Q_kN": "20683.7833",
+  "V_kN": "10907.0752",
   "casos": 15,
   "escala_deformada": 160,
   "columna_demo": 200005,
   "muro_demo": 100537,
   "elementos_con_fierro": 207,
-  "no_pasa": {"S3": 7, "0.9G-1.4EX": 13},
+  "no_pasa": {"S3": 7, "0.9G-1.4EX": 14},
   "peor_cierre": "0.9999999995",
   "_peor_cierre": "el peor cociente del diagrama reconstruido contra f_j de OpenSees, sobre su cota (Q, elemento 100277, Vz): esta al filo de 1 a proposito, y cualquier cambio en el orden de las sumas lo pasa"
  },
  "superposicion": {
   "_de_donde": "R4 (E1..E3 por cuatro vias) y la tabla QA",
   "de": 207,
-  "E1": {"max_mm": "9.6336", "no_pasa": 0},
-  "E2": {"max_mm": "12.3288", "no_pasa": 0},
-  "E3": {"max_mm": "25.0876", "no_pasa": 9, "fuera_de_curva": 3}
+  "E1": {"max_mm": "9.6322", "no_pasa": 0},
+  "E2": {"max_mm": "12.3262", "no_pasa": 0},
+  "E3": {"max_mm": "25.1115", "no_pasa": 9, "fuera_de_curva": 3}
  },
  "capacidad_200037": {
   "_de_donde": "C1: la columna lt2:P 0.70x0.70 del marcador de la AR, 20 barras D25 supuestas, f'c 35 MPa",
@@ -85,7 +86,7 @@
   "familias": 54,
   "elementos_con_fierro": 207,
   "mas_exigida_G_mas_Q": 100080,
-  "u_mas_exigida_G_mas_Q": "0.557"
+  "u_mas_exigida_G_mas_Q": "0.560"
  },
  "nucleos": {
   "_de_donde": "C4",
@@ -105,7 +106,7 @@
  },
  "persona": {
   "_de_donde": "P2 y K2: 100 kN a media viga 200141",
-  "casos": 1098,
+  "casos": 1113,
   "escala": 540,
   "viga_200141": {"uz_carga_mm": "-0.715", "M_carga_kNm": "-123.53"}
  },

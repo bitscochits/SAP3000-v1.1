@@ -22,9 +22,9 @@ una junta de dilatación. Acá son **un solo edificio**, en un solo modelo
 
 | | planos | tags | nodos | elementos | G (kN) |
 |---|---|---|---|---|---|
-| cuerpo antiguo (`ingenieria`) | 2017_67 | 1xxxxx | 326 | 559 | 63736.3812 |
+| cuerpo antiguo (`ingenieria`) | 2017_67 | 1xxxxx | 331 | 572 | 64579.8816 |
 | LT2 (`lt2`) | 2024_22 | 2xxxxx | 232 | 378 | 34148.9792 |
-| **el edificio** (`conjunto`) | | | **558** | **937** | **97885.3604** |
+| **el edificio** (`conjunto`) | | | **563** | **950** | **98728.8608** |
 
 - 47 secciones (44 de hormigón, cada una con el `f'c` de su cuerpo), 10
   diafragmas rígidos, 4 casos de carga propios del modelo (G, Q, EX, EY).
@@ -365,15 +365,15 @@ procedurales.
 - Las barras se dibujan con su sección real (b × h) y las losas con los
   polígonos de sus áreas tributarias.
 - **El suelo en niveles**: la base en -7.97 (45 apoyos) y la terraza
-  oriente del cuerpo antiguo en -4.01 (39 apoyos), con sus taludes. Las
+  oriente del cuerpo antiguo en -4.01 (40 apoyos), con sus taludes. Las
   regiones vienen de `edificio.json` (bloque `vista`), y la suite exige que
   cada apoyo en terreno quede sobre su nivel.
 - **El relieve del sitio**: el terreno del campus alrededor del edificio,
   con un hueco donde está el edificio. La planta sale de Google Earth (el
   techo del cuerpo antiguo da el rumbo y la posición, sin escala) y las
-  cotas del DEM Copernicus GLO-30, calzado en vertical con los 84 apoyos en
+  cotas del DEM Copernicus GLO-30, calzado en vertical con los 85 apoyos en
   terreno. Es **solo dibujo**: ningún cálculo lo lee. Trae la huella del
-  modelo (558 nodos, 937 elementos) y el visor no lo dibuja si es de otro.
+  modelo (563 nodos, 950 elementos) y el visor no lo dibuja si es de otro.
 
 ```powershell
 python sap.py recursos               # rehace el giro del cielo, el HDR con suelo y los mapas de detalle
@@ -594,9 +594,9 @@ Los números que no pueden cambiar sin una decisión están en
 
 | | |
 |---|---|
-| edificio | 558 nodos, 937 elementos, G = 97885.3604 kN = 63736.3812 (antiguo) + 34148.9792 (LT2); junta 0.050 m |
-| laboratorio | A tributaria 6836.5444 m², Q = 20509.6333 kN, V = 10814.0177 kN, 15 casos, escala ×160 |
-| superposición | E1 9.6336 mm, E2 12.3288 mm, E3 25.0876 mm (NO PASA 9 de 207, 3 fuera de curva) |
+| edificio | 563 nodos, 950 elementos, G = 98728.8608 kN = 64579.8816 (antiguo) + 34148.9792 (LT2); junta 0.050 m |
+| laboratorio | A tributaria 6894.5944 m², Q = 20683.7833 kN, V = 10907.0752 kN, 15 casos, escala ×160 |
+| superposición | E1 9.6322 mm, E2 12.3262 mm, E3 25.1115 mm (NO PASA 9 de 207, 3 fuera de curva) |
 | columna 200037 | Mn(P = 0) = 1190.2 kN·m; nariz de la P-M en P = 4186 kN, M = 1762 kN·m |
 | M1 | borrar la 200069: el nodo 200186 baja de -3.64515 a -21.59875 mm bajo G |
 | benchmark | marco de prueba de 4 columnas: UZ techo = -0.06348 mm (SAP2000: -0.06375) |
@@ -614,12 +614,12 @@ EX y EY que trae `edificio.json`; los resuelve `calcular` y `/analizar`
 G*). Los casos **del laboratorio** son los que arma `calculo.laboratorio`
 con q de NCh1537 y el Cs de `laboratorio.json`; son los 15 casos de
 `resultados.json`, E1..E3, LIBRE, INSTANT, la AR y el Excel. **Solo G
-coincide** (97885.3604 kN):
+coincide** (98728.8608 kN):
 
 | | del modelo | del laboratorio |
 |---|---|---|
-| Q | 20002.3025 kN | 20509.6333 kN (q = 3.0 kN/m² por área tributaria) |
-| corte basal EX = EY | 9939.7852 kN (6306.7222 del antiguo + 3633.0630 del LT2) | 10814.0177 kN = 0.10 × (G + 0.5 Q) |
+| Q | 20118.4025 kN | 20683.7833 kN (q = 3.0 kN/m² por área tributaria) |
+| corte basal EX = EY | 10021.3500 kN (6388.2870 del antiguo + 3633.0630 del LT2) | 10907.0752 kN = 0.10 × (G + 0.5 Q) |
 
 Los 874.23 kN de diferencia salen del peso sísmico: el laboratorio cuenta
 el peso aplicado directo sobre los apoyos y usa 0.5·Q con q = 3.0; el
@@ -635,8 +635,8 @@ revisar sismo` el del modelo.
 **norma** √(ux² + uy² + uz²) del nodo que más se mueve. El
 `max_desplazamiento` del servidor, de `casos_del_modelo.json` y de la
 pestaña Modificar es la **mayor componente** (rotulada "Max. componente").
-No se comparan entre sí. Los de los casos del modelo: G 7.5874, Q 2.9052,
-EX 16.4151 y EY 16.8000 mm.
+No se comparan entre sí. Los de los casos del modelo: G 7.5488, Q 2.9052,
+EX 16.4151 y EY 16.8064 mm.
 
 **D/C nominal, sin φ.** `u = M / Mn` compara la demanda mayorada con la
 capacidad **nominal** (hormigón a ε_c = 0.003), sin factor φ y sin chequeo

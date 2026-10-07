@@ -508,7 +508,7 @@ Lo escribe `exportar.resultados` (y no escribe nada si una barra no cierra,
 |---|---|---|
 | `info` | `InfoResultados` | de qué edificio es y cómo se generó |
 | `casos` | `List<CasoLab>` | G, Q, EX, EY y las 11 combinaciones de `laboratorio.json`, **en ese orden** (15) |
-| `elementos` | `List<ElementoOpenSees>` | **todos** los elementos del modelo (937) |
+| `elementos` | `List<ElementoOpenSees>` | **todos** los elementos del modelo (950) |
 | `familias` | `List<FamiliaPM>` | una curva P-M por familia de sección con fierro (54) |
 | `superposicion` | `Superposicion` | E1..E3 precalculados, tal cual (§6.4) |
 | `cargas_y_armadura` | `CargasYArmadura` | flechas de carga, deformadas sísmicas y la jaula de una columna, tal cual (§6.5) |
@@ -680,7 +680,7 @@ más la vista) con la G precalculada en los nodos.
 | `diafragmas` | `List<Diafragma>` | `nodo_maestro`, `nodos`, `perpendicular` (3 = horizontal) |
 | `brazos_rigidos` | `List<BrazoRigido>` | la lista del contrato (el edificio no usa `rigidLink`: sus brazos son barras) |
 | `casos_de_carga` | `List<CasoDeCarga>` | los 4 casos **del modelo**: `nombre`, `descripcion`, `cargas_nodales` (`nodo, fx … mz`), `cargas_distribuidas` (`elemento, wy, wz, wx`) |
-| `areas_tributarias` | `List<AreaTributaria>` | 705 polígonos: `elemento`, `nivel`, `area`, `luz`, `qG`, `carga_total`, `w` (**solo la losa**), `w_peso_propio`, `w_total_G` (`w + w_peso_propio = w_total_G = −wz` de G), `z`, `vertices`, `tamanos`, `n_poligonos` |
+| `areas_tributarias` | `List<AreaTributaria>` | 716 polígonos: `elemento`, `nivel`, `area`, `luz`, `qG`, `carga_total`, `w` (**solo la losa**), `w_peso_propio`, `w_total_G` (`w + w_peso_propio = w_total_G = −wz` de G), `z`, `vertices`, `tamanos`, `n_poligonos` |
 
 Trae además claves que el visor no lee (por ejemplo la `enfierradura` de
 cada elemento y un `resumen`): `JsonUtility` las ignora, y no viajan de
@@ -713,20 +713,20 @@ terraza quedaban 3.96 m en el aire.
 - Solo dibujo: ningún cálculo lee `terrenos`.
 - Guardia: `U1` exige que **cada apoyo no auxiliar quede sobre un nivel** (su
   z = la del nivel cuya región lo contiene, a 0.01 m) y cuenta por nivel: 45
-  en -7.97 y 39 en -4.01.
+  en -7.97 y 40 en -4.01.
 
 ### 7.3 `persona.json` (`InfluenciasPersona`)
 
 Lo escribe `exportar.persona`: una carga unitaria resuelta en OpenSees por
 cada nodo que puede recibir a la persona (`Fz` = 1 kN hacia abajo, `Mx` y
-`My` = 1 kN·m): 1098 casos.
+`My` = 1 kN·m): 1113 casos.
 
 | clave | tipo C# | qué es |
 |---|---|---|
-| `info` | `InfoInfluencias` | `edificio`, `generado_por`, `unidades`, la huella (`n_nodos` 558, `n_elementos` 937), `n_casos`, `P_por_defecto_kN` (100), `escala_deformada` (×540), `largo_dibujo_m`, `escala_momento`, `largo_momento_m`, `segundos_opensees`, y los supuestos con su porqué (`_supuesto_receptor`, `_supuesto_punto_en_la_viga`, `_supuesto_muro`, `_supuesto_P`) |
+| `info` | `InfoInfluencias` | `edificio`, `generado_por`, `unidades`, la huella (`n_nodos` 563, `n_elementos` 950), `n_casos`, `P_por_defecto_kN` (100), `escala_deformada` (×540), `largo_dibujo_m`, `escala_momento`, `largo_momento_m`, `segundos_opensees`, y los supuestos con su porqué (`_supuesto_receptor`, `_supuesto_punto_en_la_viga`, `_supuesto_muro`, `_supuesto_P`) |
 | `grupos` | `GrupoInfluencias[]` | los nodos de cada cuerpo (2 grupos: con la junta libre, una carga en un cuerpo no mueve al otro) |
 | `casos` | `CasoInfluencia[]` | `nodo`, `grupo`, `gdl` (`Fz`, `Mx`, `My`), `datos` (los desplazamientos de los nodos de su grupo, enteros de 16 bits en base64, por `escala_t` en traslaciones y `escala_r` en giros), `elementos` y `fuerzas` (el `localForce` de las barras que muestra su receptor, igual, por `escala_f` y `escala_m`) |
-| `receptores` | `ReceptorPersona[]` | 544: por cada región tributaria, quién recibe la carga: `elemento`, `nodo`, `n1`, `n2`, `tipo` (`viga` o `nodo`, la losa que apoya directo en un muro), `z`, `L`, `flex` (= L³/EI, m/kN), `dx`, `dy` (la dirección en planta) y `elementos_m` (las barras cuyos momentos se muestran) |
+| `receptores` | `ReceptorPersona[]` | 551: por cada región tributaria, quién recibe la carga: `elemento`, `nodo`, `n1`, `n2`, `tipo` (`viga` o `nodo`, la losa que apoya directo en un muro), `z`, `L`, `flex` (= L³/EI, m/kN), `dx`, `dy` (la dirección en planta) y `elementos_m` (las barras cuyos momentos se muestran) |
 
 La carga cae en la **proyección** de la persona sobre el eje de la viga
 dueña de la región donde está parada; si la región es de un muro, en su
@@ -738,7 +738,7 @@ Lo escribe `exportar.relieve` desde `entrada/sitio/`. Solo dibujo.
 
 | clave | tipo C# | qué es |
 |---|---|---|
-| `info` | `InfoRelieve` | `edificio`, `generado_por`, `fuente` (Copernicus DEM GLO-30), `atribucion`, `zona`, `_por_que`, la huella (`n_nodos`, `n_elementos`), `rumbo_x_grados` (el rumbo de +x, del techo trazado en Google Earth), `lon_centro_techo`, `lat_centro_techo`, `desfase_vertical_m` y `residuo_rms_m` (el calce vertical con los 84 apoyos en terreno) |
+| `info` | `InfoRelieve` | `edificio`, `generado_por`, `fuente` (Copernicus DEM GLO-30), `atribucion`, `zona`, `_por_que`, la huella (`n_nodos`, `n_elementos`), `rumbo_x_grados` (el rumbo de +x, del techo trazado en Google Earth), `lon_centro_techo`, `lat_centro_techo`, `desfase_vertical_m` y `residuo_rms_m` (el calce vertical con los 85 apoyos en terreno) |
 | `x0`, `y0`, `paso`, `nx`, `ny` | float, int | la malla, en m OpenSees (paso 4 m) |
 | `z` | `float[]` | `ny` filas de `nx` cotas (z OpenSees); `sin_dato` es la cota de los nodos fuera de la zona |
 | `cota_fondo` | float | la cota del terreno del modelo (`info.cota_terreno`): hasta ahí bajan los taludes |

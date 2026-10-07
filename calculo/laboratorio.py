@@ -26,8 +26,8 @@ r"""
  un cuerpo y del plano en el otro, sismo 0.10 por cuerpo) los resuelve
  /analizar cuando Unity reanaliza. Los "casos del laboratorio" (estos)
  alimentan los resultados, la superposicion, el Excel y la AR. Solo G
- coincide: el corte basal del modelo es 9939.79 kN y el del
- laboratorio 10814.02 kN, y no es un error.
+ coincide: el corte basal del modelo es 10021.35 kN y el del
+ laboratorio 10907.08 kN, y no es un error.
 
  ----------------------------------------------------------------
  COMO SE CONSTRUYE Q
