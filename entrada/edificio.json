@@ -74320,7 +74320,7 @@
    "El M 0.60x2.92 del LT2 quedo sin fierro, y 11 muros del LT2 no traen enfierradura (200010, 200011, 200013, 200026, 200027, 200042, 200043, 200058, 200059, 200074, 200075): sin curva P-M no tienen D/C.",
    "La enfierradura del LT2 no trae acero ni recubrimiento: la capacidad usa 0.03 m y fy 420.",
    "\"L:3+3\" se leyo como barras de punta en Ingenieria, aunque la lamina 000 del LT2 dice que \"L:\" son laterales de viga (CLAUDE.md, trampas).",
-   "Los dos cuerpos traen casos de carga del MODELO distintos de los del laboratorio (parametros.json): solo G coincide. Ver CLAUDE.md, \"dos fuentes de casos\"."
+   "Los dos cuerpos traen casos de carga del MODELO distintos de los del laboratorio (entrada/laboratorio.json): solo G coincide. Ver CLAUDE.md, \"dos fuentes de casos\"."
   ]
  }
 }

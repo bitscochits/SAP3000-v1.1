@@ -1,0 +1,5 @@
+# Las fotos de cada captura se quedan en disco para mirarlas, pero no van
+# al repo: pesan y se rehacen con  python sap.py capturar <modo>.
+# El registro.txt SI va: es lo que compara verificacion/capturas.py.
+*.jpg
+*.png

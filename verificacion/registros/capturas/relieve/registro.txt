@@ -1,0 +1,21 @@
+AmbienteVisor: suelo en z = -7.97 m (info.cota_terreno); hueco del subterraneo 0 m2 sobre 0 estampas bajo la cota (fondo z = -7.97); 0 apoyos en terreno fuera del hueco, 0 sobre muros del subterraneo.
+AmbienteVisor: texturas procedurales de 512 px en 1113 ms.
+AmbienteVisor: 1 nivel(es) de terreno sobre la base (z = -7.97 m, info.terrenos), celda 0.25 m, 15039 vertices. Terraza 'ingenieria: terraza oriente (N.R. -4.01)' en z = -4.01 m (1 poligono(s)): 777 m2 de tierra, 124 m2 recortados alrededor de 90 estampas que bajan a la base; 33 apoyos sobre tierra, 6 sobre la estructura que baja.
+AmbienteVisor: losas de dibujo desde areas_tributarias (705 entradas): z -4.01: 186 poligonos, 1664.2 m2 dibujados, cara superior -3.60; z -0.05: 166 poligonos, 1274.9 m2 dibujados, cara superior 0.36; z 3.91: 166 poligonos, 1274.9 m2 dibujados, cara superior 4.32; z 7.87: 189 poligonos, 1397.4 m2 dibujados, cara superior 8.28; z 11.83: 176 poligonos, 1352.4 m2 dibujados, cara superior 12.24
+AmbienteVisor: relieve del sitio de 50 x 63 nodos cada 4.0 m, 2 huecos, fondo en z = -7.97.
+relieveEstado: Relieve del sitio (conjunto): Copernicus DEM GLO-30 (ESA/Airbus, TanDEM-X 2011-2015), modelo de superficie, interpolado en una malla cada 4 m; ubicado con el techo del cuerpo antiguo en Google Earth (+x del modelo a 71.9 grados del norte) y calzado con los apoyos en terreno (desfase 929.08 m, residuo rms 1.22 m). Solo dibujo.
+edificio: 
+foto relieve_1_iso_suroeste: distancia 293.3 m, pitch 28, yaw 225
+foto relieve_2_iso_noreste: distancia 293.3 m, pitch 28, yaw 45
+foto relieve_3_planta: distancia 338.4 m, pitch 89, yaw 0
+foto relieve_4_cerca: distancia 124.1 m, pitch 18, yaw 200
+errores del log: 0
+
+DATO archivos.modelo.md5 = a156b3e9d7e0af080c53ffc43e3640de
+DATO archivos.resultados.md5 = f0aa27bff6226100b76f03d7e04d90c7
+DATO archivos.carga_movil.md5 = 30f0df6405b6c44a7c8dd09ce9780a51
+DATO archivos.persona.md5 = e829081582cd575cf05860161517a57d
+DATO archivos.relieve.md5 = c1695194039dedb19686c38a12cb501f
+DATO archivos.excel.md5 = 62785d0000e435eccd46bc14f124135e
+DATO log.errores = 0
+DATO salida = 0

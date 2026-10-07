@@ -1,7 +1,7 @@
 {
  "_que_es": "Lo que midio python -m verificacion.ar registro_y_tracking: [3b] la transformacion de ar.js contra la de Python y [4] el tracking con un video sintetico de pose conocida. Lo lee el bloque precision. No se regenera con sap.py preparar: se vuelve a medir corriendo ese bloque (necesita Chrome o Edge).",
  "_digitos": "distancia_m, error_mm, ancho_px, ejes_deg... van con los digitos con que [4] los informa (los que usa el presupuesto de precision); sin_redondear trae los de la corrida.",
- "medido": "2026-10-06T19:28:22",
+ "medido": "2026-10-06T21:11:20",
  "navegador": "chrome.exe",
  "fov_mindar_grados": 45.0,
  "video_px": [
@@ -27,7 +27,7 @@
    "verdad_m": 0.45,
    "inclinacion_deg": 0.0,
    "giro_deg": 0.0,
-   "poses_publicadas": 10,
+   "poses_publicadas": 7,
    "detecta": true,
    "distancia_m": 0.451,
    "error_mm": 1.1,
@@ -37,10 +37,10 @@
    "ejes_deg": 1.1,
    "cota_deg": 2.7,
    "sin_redondear": {
-    "distancia_m": 0.451148071863601,
-    "error_mm": 1.1480718636009968,
+    "distancia_m": 0.4511480718636011,
+    "error_mm": 1.1480718636011078,
     "ancho_px": 257.51611331979683,
-    "inclinacion_estimada_deg": 1.0926739449059741,
+    "inclinacion_estimada_deg": 1.0926739449056404,
     "ejes_deg": 1.0926739449057516
    },
    "ok": true
@@ -49,7 +49,7 @@
    "verdad_m": 0.55,
    "inclinacion_deg": 30.0,
    "giro_deg": 0.0,
-   "poses_publicadas": 10,
+   "poses_publicadas": 7,
    "detecta": true,
    "distancia_m": 0.551,
    "error_mm": 0.6,
@@ -71,7 +71,7 @@
    "verdad_m": 0.6,
    "inclinacion_deg": 40.0,
    "giro_deg": 20.0,
-   "poses_publicadas": 13,
+   "poses_publicadas": 8,
    "detecta": true,
    "distancia_m": 0.597,
    "error_mm": 2.6,
@@ -81,11 +81,11 @@
    "ejes_deg": 0.9,
    "cota_deg": 3.6,
    "sin_redondear": {
-    "distancia_m": 0.5973581983833024,
-    "error_mm": 2.641801616697581,
+    "distancia_m": 0.5973581983833023,
+    "error_mm": 2.641801616697692,
     "ancho_px": 193.13708498984764,
-    "inclinacion_estimada_deg": 40.56112540400333,
-    "ejes_deg": 0.8888147062712323
+    "inclinacion_estimada_deg": 40.561125404003334,
+    "ejes_deg": 0.8888147062716424
    },
    "ok": true
   }

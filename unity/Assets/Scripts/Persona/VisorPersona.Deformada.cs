@@ -66,7 +66,7 @@ public class InfoInfluencias
     public string edificio, generado_por, unidades, _por_que;
     public string _supuesto_receptor, _supuesto_punto_en_la_viga, _supuesto_muro, _supuesto_P;
     public int n_nodos, n_elementos, n_casos;
-    public float P_por_defecto_kN, escala_deformada, largo_dibujo_m, segundos_opensees;
+    public float P_por_defecto_kN, escala_deformada, largo_dibujo_m;
     public float escala_momento, largo_momento_m;
 }
 
@@ -195,8 +195,8 @@ public partial class VisorPersona
         influencias = t2;
         if (escalaPersona <= 0f) escalaPersona = t2.info.escala_deformada;
         estadoInfluencias = string.Format(CultureInfo.InvariantCulture,
-            "{0} casos unitarios de '{1}', resueltos por OpenSees en Python ({2}) en {3:F0} s.",
-            t2.casos.Length, t2.info.edificio, t2.info.generado_por, t2.info.segundos_opensees);
+            "{0} casos unitarios de '{1}', resueltos por OpenSees en Python ({2}).",
+            t2.casos.Length, t2.info.edificio, t2.info.generado_por);
         if (puesta) PedirDeformadaPersona();
     }
 

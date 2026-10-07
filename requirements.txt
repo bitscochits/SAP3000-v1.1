@@ -9,7 +9,7 @@ openpyxl==3.1.5        # libros Excel de resultados
 matplotlib==3.11.2     # graficos de capacidad (curva P-M, M-phi, fibras)
 pillow==12.3.0         # texturas de la vista realista y marcador de la AR
 
-# Opcional, solo para volver a bajar el relieve del sitio (sap.py relieve --bajar-dem):
+# Opcional, solo para volver a bajar el relieve del sitio (sap.py exportar relieve --bajar-dem):
 # requests==2.34.2
 
 # Unity NO se instala con pip: Unity Hub, version 6000.5.10f1

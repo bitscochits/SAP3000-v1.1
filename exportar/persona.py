@@ -448,6 +448,10 @@ def armar(modelo, vista, fallas):
         if (k + 1) % 200 == 0:
             print('    %d de %d (%.0f s)' % (k + 1, len(casos), time.time() - t0), flush=True)
     t_casos = time.time() - t0
+    # El tiempo se informa en la consola y NO viaja en persona.json: un dato que
+    # cambia en cada corrida hace que el archivo nunca salga igual dos veces, y la
+    # verificacion de las capturas (md5 de lo que leyo la app) lo daria por vencido.
+    print('  %d casos unitarios resueltos por OpenSees en %.1f s' % (len(salida), t_casos))
     fallas.check(fuera == 0.0, '[5] fuera de su grupo, cada caso vale CERO exacto (la junta es libre)',
                  'mayor |u| fuera del grupo: %.3e' % fuera)
 
@@ -465,7 +469,6 @@ def armar(modelo, vista, fallas):
             'escala_momento': 0.0,
             'largo_momento_m': LARGO_MOMENTO_M,
             'n_casos': len(salida),
-            'segundos_opensees': round(t_casos, 1),
             '_por_que': ('Cada caso es UNA carga unitaria resuelta por OpenSees. La deformada de la '
                          'persona es la suma de a lo mas seis, con los pesos de Hermite de donde '
                          'esta parada, mas la flecha biempotrada dentro de la viga cargada: Unity '
